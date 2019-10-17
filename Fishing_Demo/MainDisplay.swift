@@ -1,5 +1,5 @@
 //
-//  Main.swift
+//  MainDisplay.swift
 //  Fishing_Demo
 //
 //  Created by 松本　カズマ on 2019/10/10.
