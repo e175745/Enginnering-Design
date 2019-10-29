@@ -56,7 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let configuration = ARWorldTrackingConfiguration()
         
         // 水平表示
-        configuration.planeDetection = .horizontal
+        configuration.planeDetection = [.horizontal]
         
         // Run the view's session
         sceneView.session.run(configuration)
@@ -64,12 +64,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         // Pause the view's session
         sceneView.session.pause()
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        
         guard let camera = sceneView.pointOfView else {
             return
         }
@@ -81,6 +81,40 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 
             }
         }
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
+    
+        // 平面ジオメトリを作成
+        let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
+                                height: CGFloat(planeAnchor.extent.z))
+        geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
+
+        // 平面ジオメトリを持つノードを作成
+        let planeNode = SCNNode(geometry: geometry)
+            //x-z平面に合わせる
+        planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
+
+        DispatchQueue.main.async(execute: {
+            // 検出したアンカーに対応するノードに子ノードとして持たせる
+            node.addChildNode(planeNode)
+        })
+    }
+    
+    // 更新されたとき
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
+
+        DispatchQueue.main.async(execute: {
+            // 平面ジオメトリのサイズを更新
+            for childNode in node.childNodes {
+                guard let plane = childNode.geometry as? SCNPlane else {continue}
+                plane.width = CGFloat(planeAnchor.extent.x)
+                plane.height = CGFloat(planeAnchor.extent.z)
+                break
+            }
+        })
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
@@ -104,7 +138,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
     
             let location = sender.location(in: sceneView)
-            let hitTestResult = sceneView.hitTest(location, types: .existingPlane)
+            let hitTestResult = sceneView.hitTest(location, types: .existingPlaneUsingExtent)
         
             if let result = hitTestResult.first {
             
@@ -113,9 +147,22 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     result.worldTransform.columns.3.x,
                     result.worldTransform.columns.3.y + 0.1,
                     result.worldTransform.columns.3.z)
-                let action = SCNAction.move(to: target, duration: 2)
+                let action = SCNAction.move(to: target, duration: 1)
                 objNode.runAction(action)
             }
+        }
+    }
+    
+    @IBAction func Sinker(_ sender: Any) {
+        if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
+            let action1 = SCNAction.moveBy(x: 0, y: 0, z: 0, duration: 1)
+            let action2 = SCNAction.moveBy(x: 0, y: 0, z: 0, duration: 1)
+            objNode.runAction(
+                SCNAction.sequence([
+                action1,
+                action2,
+                ])
+            )
         }
     }
     
@@ -144,6 +191,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.run(ARWorldTrackingConfiguration())
     }
     
+    
     @IBAction func SettingButton(_ sender: Any) {
         
         if existence{
@@ -154,18 +202,25 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 objNode.runAction(action)
             }
         }else{
+        
             // Cubeを作成
             // let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-            let obj = SCNSphere(radius: 0.1)
+            let obj = SCNSphere(radius: 0.05)
             let objNode = SCNNode(geometry: obj)
             objNode.name = "obj"
+            
             
             // Cubeのマテリアルを設定
             let material = SCNMaterial()
             material.diffuse.contents = UIColor.red
             material.diffuse.intensity = 0.8;
             objNode.geometry?.materials = [material]
-            
+
+            /*
+            guard let scene = SCNScene(named: "cube.scn", inDirectory: "art.scnassets") else {fatalError()}
+            guard let objNode = scene.rootNode.childNode(withName: "obj", recursively: true) else {fatalError()}
+            objNode.scale = SCNVector3(0.001, 0.001, 0.001)
+            */
             // Cubeの座標を設定
             objNode.position = SCNVector3(0,0,-0.5)
             sceneView.scene.rootNode.addChildNode(objNode)
