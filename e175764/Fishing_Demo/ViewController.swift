@@ -9,14 +9,50 @@
 import UIKit
 import SceneKit
 import ARKit
+import CoreMotion
+
+class objectNode: SCNNode{
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    override init() {
+    super.init()
+    let objGeometry = SCNSphere(radius: 0.05)
+    geometry=objGeometry
+    name = "obj"
+    
+    // Cubeのマテリアルを設定
+    let material = SCNMaterial()
+    material.diffuse.contents = UIColor.red
+    material.diffuse.intensity = 0.8;
+    geometry?.materials = [material]
+    let objshape=SCNPhysicsShape(geometry: objGeometry, options: nil)
+    let objbody=SCNPhysicsBody(type: .static, shape: objshape)
+    objbody.restitution = 1.0
+    physicsBody = objbody
+    }
+}
+
+class PlaneNode: SCNNode{
+    fileprivate override init() {
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+}
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
     var existence = false
-    
     override func viewDidLoad() {
+       
+        
         super.viewDidLoad()
         
         let scene = SCNScene()
@@ -39,7 +75,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // longPress
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressView))
         sceneView.addGestureRecognizer(longPressGesture)
-        
+    
         // オムニライトを追加
         let lightNode = SCNNode()
         lightNode .light = SCNLight()
@@ -48,6 +84,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
          scene.rootNode.addChildNode(lightNode )
         
     }
+
     
     @IBAction func Sinker(_ sender: Any) {
         if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
@@ -78,6 +115,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
 
+    let motionManager = CMMotionManager()
+    
+    func getMotionData(deviceMotion:CMDeviceMotion) {
+        print("attitudeX:", deviceMotion.attitude.pitch)
+        print("attitudeY:", deviceMotion.attitude.roll)
+        print("attitudeZ:", deviceMotion.attitude.yaw)
+        print("gyroX:", deviceMotion.rotationRate.x)
+        print("gyroY:", deviceMotion.rotationRate.y)
+        print("gyroZ:", deviceMotion.rotationRate.z)
+        print("gravityX:", deviceMotion.gravity.x)
+        print("gravityY:", deviceMotion.gravity.y)
+        print("gravityZ:", deviceMotion.gravity.z)
+        print("accX:", deviceMotion.userAcceleration.x)
+        print("accY:", deviceMotion.userAcceleration.y)
+        print("accZ:", deviceMotion.userAcceleration.z)
+    }
+    // モーションデータの取得を開始
+    func startSensorUpdates(intervalSeconds:Double) {
+        motionManager.deviceMotionUpdateInterval = intervalSeconds
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+                self.getMotionData(deviceMotion: motion!)
+            })
+        }
+    }
+    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
            guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
        
@@ -160,8 +223,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
-    
-    
+
     
     @objc func tapView(sender: UIGestureRecognizer) {
         existence = false
@@ -172,7 +234,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let hitTestResult = sceneView.hitTest(location, types: .existingPlane)
         
             if let result = hitTestResult.first {
-            
+                objNode.physicsBody=SCNPhysicsBody()
                 // オブジェクトを飛ばす
                 let target = SCNVector3Make(
                     result.worldTransform.columns.3.x,
@@ -210,7 +272,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     @IBAction func SettingButton(_ sender: Any) {
-        
+        startSensorUpdates(intervalSeconds: 1.0)
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
                 
@@ -221,18 +283,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }else{
             // Cubeを作成
             // let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-            let obj = SCNSphere(radius: 0.05)
-            let objNode = SCNNode(geometry: obj)
-            objNode.name = "obj"
-            
-            // Cubeのマテリアルを設定
-            let material = SCNMaterial()
-            material.diffuse.contents = UIColor.red
-            material.diffuse.intensity = 0.8;
-            objNode.geometry?.materials = [material]
-            
-            // Cubeの座標を設定
-            objNode.position = SCNVector3(0,0,-0.5)
+            let objNode = objectNode()
             sceneView.scene.rootNode.addChildNode(objNode)
             existence = true
         }
