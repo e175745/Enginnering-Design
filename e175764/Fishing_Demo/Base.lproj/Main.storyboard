@@ -55,6 +55,15 @@
                                     <action selector="Sinker:" destination="BV1-FR-VrT" eventType="touchUpInside" id="xHV-Nk-g6Y"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0tG-1R-OH5">
+                                <rect key="frame" x="164" y="401" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <connections>
+                                    <action selector="endCasting:" destination="BV1-FR-VrT" eventType="touchUpInside" id="xmF-y3-VY2"/>
+                                    <action selector="startCasting:" destination="BV1-FR-VrT" eventType="touchDown" id="e50-6o-x1G"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>

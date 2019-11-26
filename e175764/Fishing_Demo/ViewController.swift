@@ -11,6 +11,71 @@ import SceneKit
 import ARKit
 import CoreMotion
 
+protocol GameScene {
+    func tap()
+    func release()
+    func update(cameraNode:SCNNode,acc:SCNVector3,rot:SCNVector3)
+}
+
+class Visualizer{
+    init(){
+        let objGeometry = SCNSphere(radius: 0.05)
+        // Cubeのマテリアルを設定
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        material.diffuse.intensity = 0.8;
+        objGeometry.materials = [material]
+        floatNode=SCNNode(geometry: objGeometry)
+    }
+
+    func moveFloat(to pos:SCNVector3){
+        
+    }
+    func setFloatVel(_ vel:SCNVector3){
+        
+    }
+    func update(){
+        
+    }
+    var floatPos:SCNVector3{get{return floatNode.position}}
+    let floatNode:SCNNode
+    var floatVel:SCNVector3
+}
+
+class Casting:GameScene{
+    func update(cameraNode: SCNNode, acc: SCNVector3, rot: SCNVector3) {
+        <#code#>
+    }
+    
+    func tap() {
+        <#code#>
+    }
+    
+    var pos=SCNVector3(0,0,-0.5)
+    var yvel=0.0
+    var zvel=0.0
+    //vel=SCNvector3
+    var flag=false
+    //isReleased
+    //The Visualizer manages the velocity of the float
+    
+    //This class has to pass the initial posision and velocity of the float to the visualizer
+    func release(){
+        flag=true
+        
+    }
+    
+    func update(now_pos:SCNVector3,now_yvel:Float,now_zvel:Float){
+        if(flag){
+            let new_yvel=now_yvel+0.1
+            let newz=now_pos.z + new_yvel*0.01
+            let newy=now_pos.y + now_zvel*0.01
+            let newpos=SCNVector3(0,newy,newz)
+            self.pos=newpos
+        }
+    }
+}
+
 class objectNode: SCNNode{
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -27,8 +92,9 @@ class objectNode: SCNNode{
     material.diffuse.intensity = 0.8;
     geometry?.materials = [material]
     let objshape=SCNPhysicsShape(geometry: objGeometry, options: nil)
-    let objbody=SCNPhysicsBody(type: .static, shape: objshape)
+    let objbody=SCNPhysicsBody(type: .dynamic, shape: objshape)
     objbody.restitution = 1.0
+    objbody.isAffectedByGravity=false
     physicsBody = objbody
     }
 }
@@ -42,19 +108,60 @@ class PlaneNode: SCNNode{
         fatalError("init(coder:) has not been implemented")
     }
     
+    init(anchor: ARPlaneAnchor) {
+        super.init()
+        
+        geometry = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        
+        let planeMaterial = SCNMaterial()
+        planeMaterial.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
+        geometry?.materials = [planeMaterial]
+        
+        let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
+        let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
+        physicsBody = planeBody
+        
+        let x = CGFloat(anchor.center.x)
+        let y = CGFloat(anchor.center.y)
+        let z = CGFloat(anchor.center.z)
+        
+        position = SCNVector3(x,y,z)
+        eulerAngles.x = -.pi / 2
+    }
+    func update(anchor: ARPlaneAnchor) {
+           
+           (geometry as! SCNPlane).width = CGFloat(anchor.extent.x)
+           (geometry as! SCNPlane).height = CGFloat(anchor.extent.z)
     
+           let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
+           let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
+           physicsBody = planeBody
+           
+           let x = CGFloat(anchor.center.x)
+           let y = CGFloat(anchor.center.y)
+           let z = CGFloat(anchor.center.z)
+           position = SCNVector3(x,y,z)
+       }
 }
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    let cast = casting()
+    let motionManager = CMMotionManager()
+    @IBAction func startCasting(_ sender: UIButton) {
+        startSensorUpdates(intervalSeconds: 0.01)
+    }
+        
+    @IBAction func endCasting(_ sender: UIButton) {
+        motionManager.stopAccelerometerUpdates()
+        cast.release()
+    }
+    
     @IBOutlet var sceneView: ARSCNView!
     
     var existence = false
     override func viewDidLoad() {
-       
-        
         super.viewDidLoad()
-        
+
         let scene = SCNScene()
         // Set the view's delegate
         sceneView.delegate = self
@@ -115,66 +222,42 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
 
-    let motionManager = CMMotionManager()
     
-    func getMotionData(deviceMotion:CMDeviceMotion) {
-        print("attitudeX:", deviceMotion.attitude.pitch)
-        print("attitudeY:", deviceMotion.attitude.roll)
-        print("attitudeZ:", deviceMotion.attitude.yaw)
-        print("gyroX:", deviceMotion.rotationRate.x)
-        print("gyroY:", deviceMotion.rotationRate.y)
-        print("gyroZ:", deviceMotion.rotationRate.z)
-        print("gravityX:", deviceMotion.gravity.x)
-        print("gravityY:", deviceMotion.gravity.y)
-        print("gravityZ:", deviceMotion.gravity.z)
-        print("accX:", deviceMotion.userAcceleration.x)
-        print("accY:", deviceMotion.userAcceleration.y)
-        print("accZ:", deviceMotion.userAcceleration.z)
-    }
     // モーションデータの取得を開始
     func startSensorUpdates(intervalSeconds:Double) {
-        motionManager.deviceMotionUpdateInterval = intervalSeconds
-        if motionManager.isDeviceMotionAvailable{
-            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
-                self.getMotionData(deviceMotion: motion!)
+        motionManager.accelerometerUpdateInterval = intervalSeconds
+        if motionManager.isAccelerometerAvailable{
+            motionManager.startAccelerometerUpdates(
+            to: OperationQueue.current!,
+            withHandler: {(accelData: CMAccelerometerData?, errorOC: Error?) in
+                self.outputAccelData(acceleration: accelData!.acceleration)
             })
         }
     }
-    
+    func outputAccelData(acceleration: CMAcceleration) {
+        cast.yvel=acceleration.y
+        cast.zvel=acceleration.z
+    }
+
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-       
-           // 平面ジオメトリを作成
-           let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                                   height: CGFloat(planeAnchor.extent.z))
-           geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
-
-           // 平面ジオメトリを持つノードを作成
-           let planeNode = SCNNode(geometry: geometry)
-               //x-z平面に合わせる
-           planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+        let planeNode = PlaneNode(anchor: planeAnchor)
            DispatchQueue.main.async(execute: {
-               // 検出したアンカーに対応するノードに子ノードとして持たせる
                node.addChildNode(planeNode)
            })
+        }
        }
        
        // 更新されたとき
        func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-
            DispatchQueue.main.async(execute: {
                // 平面ジオメトリのサイズを更新
-               for childNode in node.childNodes {
-                   guard let plane = childNode.geometry as? SCNPlane else {continue}
-                   plane.width = CGFloat(planeAnchor.extent.x)
-                   plane.height = CGFloat(planeAnchor.extent.z)
-                   break
+               if let planeAnchor = anchor as? ARPlaneAnchor, let planeNode = node.childNodes[0] as? PlaneNode {
+                   // ノードの位置及び形状を修正する
+                   planeNode.update(anchor: planeAnchor)
                }
            })
        }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -195,16 +278,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
     
+    //Delete this function
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard let camera = sceneView.pointOfView else {
             return
         }
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-                let cameraPos = SCNVector3Make(0, 0, -0.5)
+                let cameraPos=cast.pos
                 let position = camera.convertPosition(cameraPos, to: nil)
                 objNode.position = position
-                
+                cast.update(now_pos:cameraPos,now_yvel: Float(cast.yvel),now_zvel: Float(cast.zvel))
             }
         }
     }
@@ -229,21 +313,26 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         existence = false
         
         if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-    
-            let location = sender.location(in: sceneView)
-            let hitTestResult = sceneView.hitTest(location, types: .existingPlane)
-        
-            if let result = hitTestResult.first {
-                objNode.physicsBody=SCNPhysicsBody()
-                // オブジェクトを飛ばす
-                let target = SCNVector3Make(
-                    result.worldTransform.columns.3.x,
-                    result.worldTransform.columns.3.y + 0.1,
-                    result.worldTransform.columns.3.z)
-                let action = SCNAction.move(to: target, duration: 2)
-                objNode.runAction(action)
-            }
-        }
+
+            if let camera = sceneView.pointOfView { // カメラを取得
+                    // カメラの向いてる方向を計算
+                    let mat = camera.transform
+                    let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 0.1, -1 * mat.m33)
+                    // 上方向に位置を補正
+                objNode.physicsBody?.isAffectedByGravity=true
+                    objNode.physicsBody?.applyForce(dir, asImpulse: true)
+                }
+                
+                // カメラを取得
+                // カメラの向いてる方向を計算
+                /*
+                let mat = camera.transform
+                let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 0.1, -1 * mat.m33)
+                // 上方向に位置を補正
+                objNode.position = SCNVector3Make(camera.position.x, camera.position.y - 0.01, camera.position.z)
+                objNode.physicsBody?.applyForce(dir, asImpulse: true)
+                */
+    }
     }
     
     @objc func longPressView(sender: UILongPressGestureRecognizer) {
@@ -259,25 +348,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @IBAction func DeleteKey(_ sender: Any) {
-        // sessionを停止
-        sceneView.session.pause()
-        // 全てのNodeに対して処理を行う
-        sceneView.scene.rootNode.enumerateChildNodes {(node, _) in
-        // Nodeを削除
-        node.removeFromParentNode()
-        }
-        // sessionを再開
-        sceneView.session.run(ARWorldTrackingConfiguration())
-    }
+
     
     @IBAction func SettingButton(_ sender: Any) {
-        startSensorUpdates(intervalSeconds: 1.0)
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
                 
                 let homePosi = SCNVector3(0,0,-0.5)
                 let action = SCNAction.move(to: homePosi, duration: 1)
+                objNode.physicsBody?.isAffectedByGravity=false
                 objNode.runAction(action)
             }
         }else{
