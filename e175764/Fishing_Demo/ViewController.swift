@@ -27,15 +27,22 @@ class Visualizer{
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
     }
-
+    //平面のノードもフィールド変数として必要？
+    //カメラポジを取得して, 初期位置を決定
+    //カメラの位置を引数としてとる(ワールド座標系)
     func moveFloat(to pos:SCNVector3){
-        
+        floatNode.position = pos
     }
     func setFloatVel(_ vel:SCNVector3){
-        
+        floatVel = vel
     }
+    //重力加速度の計算が未実装
+    //必要な移動が終了した時にV=0
     func update(){
-        
+        let newx = floatPos.x + floatVel.x
+        let newy = floatPos.y + floatVel.y
+        let newz = floatPos.z + floatVel.z
+        floatNode.position = SCNVector3(newx,newy,newz)
     }
     var floatPos:SCNVector3{get{return floatNode.position}}
     let floatNode:SCNNode
@@ -43,61 +50,29 @@ class Visualizer{
 }
 
 class Casting:GameScene{
+    let visual = Visualizer()
+    var campos=SCNVector3(0,0,0)
+    var vel=SCNVector3(0,0,0)
+    //func collision is needed
+    //vel=SCNvector3
+    //isReleased
+    //The Visualizer manages the velocity of the float
+    //It is also has to pass
+    //This class has to pass the initial posision and velocity of the float to the visualizer
     func update(cameraNode: SCNNode, acc: SCNVector3, rot: SCNVector3) {
-        <#code#>
+        vel = acc
+        campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
     }
     
     func tap() {
-        <#code#>
     }
     
-    var pos=SCNVector3(0,0,-0.5)
-    var yvel=0.0
-    var zvel=0.0
-    //vel=SCNvector3
-    var flag=false
-    //isReleased
-    //The Visualizer manages the velocity of the float
-    
-    //This class has to pass the initial posision and velocity of the float to the visualizer
     func release(){
-        flag=true
-        
-    }
-    
-    func update(now_pos:SCNVector3,now_yvel:Float,now_zvel:Float){
-        if(flag){
-            let new_yvel=now_yvel+0.1
-            let newz=now_pos.z + new_yvel*0.01
-            let newy=now_pos.y + now_zvel*0.01
-            let newpos=SCNVector3(0,newy,newz)
-            self.pos=newpos
-        }
+        visual.moveFloat(to:campos)
+        visual.setFloatVel(vel)
     }
 }
 
-class objectNode: SCNNode{
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    override init() {
-    super.init()
-    let objGeometry = SCNSphere(radius: 0.05)
-    geometry=objGeometry
-    name = "obj"
-    
-    // Cubeのマテリアルを設定
-    let material = SCNMaterial()
-    material.diffuse.contents = UIColor.red
-    material.diffuse.intensity = 0.8;
-    geometry?.materials = [material]
-    let objshape=SCNPhysicsShape(geometry: objGeometry, options: nil)
-    let objbody=SCNPhysicsBody(type: .dynamic, shape: objshape)
-    objbody.restitution = 1.0
-    objbody.isAffectedByGravity=false
-    physicsBody = objbody
-    }
-}
 
 class PlaneNode: SCNNode{
     fileprivate override init() {
@@ -145,7 +120,7 @@ class PlaneNode: SCNNode{
 }
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-    let cast = casting()
+    let cast = Casting()
     let motionManager = CMMotionManager()
     @IBAction func startCasting(_ sender: UIButton) {
         startSensorUpdates(intervalSeconds: 0.01)
@@ -234,9 +209,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             })
         }
     }
-    func outputAccelData(acceleration: CMAcceleration) {
-        cast.yvel=acceleration.y
-        cast.zvel=acceleration.z
+    func outputAccelData(acceleration: CMAcceleration){
+        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
@@ -279,6 +253,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     //Delete this function
+    //Make the function whichi uses Timer
+    //In this function, it has to be written update function
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard let camera = sceneView.pointOfView else {
             return
