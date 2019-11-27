@@ -130,8 +130,8 @@ class Hooking{
                 //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
                 seccount += 0.5
             }
-            print(gyroX)
-            print(accZ)
+            //print(gyroX)
+            //print(accZ)
         }
     }
     
