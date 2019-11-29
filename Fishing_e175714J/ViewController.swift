@@ -11,11 +11,11 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-/*
+
 protocol GameScene {
     func tap()
     func release()
-    func update(cameraNode:SCNNode,acc:SCNVector3,rot:SCNVector3)
+    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3)
 }
 
 class Visualizer{
@@ -28,54 +28,64 @@ class Visualizer{
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
     }
-
+    //平面のノードもフィールド変数として必要？
+    //カメラポジを取得して, 初期位置を決定
+    //カメラの位置を引数としてとる(ワールド座標系)
     func moveFloat(to pos:SCNVector3){
-        
+        floatNode.position = pos
     }
     func setFloatVel(_ vel:SCNVector3){
-        
+        floatVel = vel
     }
+    //重力加速度の計算が未実装
+    //必要な移動が終了した時にV=0
     func update(){
-        
+        let newx = floatPos.x + floatVel.x
+        let newy = floatPos.y + floatVel.y
+        let newz = floatPos.z + floatVel.z
+        floatNode.position = SCNVector3(newx,newy,newz)
     }
     var floatPos:SCNVector3{get{return floatNode.position}}
     let floatNode:SCNNode
-    var floatVel:SCNVector3
+    var floatVel = SCNVector3(0,0,0)
 }
-*/
+
 
 //ここから仲西
-class Hooking{
-    // CMMotionManagerのインスタンスを生成
-    let motionManager = CMMotionManager()
+class Hooking:GameScene{
     
-    var gyroX:Double = 0
-    var accZ:Double = 0
-    var seccount:Double = 0
+    //let visual=Vizualizer()
+    func tap(){}
+    func release(){}
+    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
+        accHook = acc//using accHook.Z
+        gryroHook = gyro//using gryroHook.X
+    }
+    
+    var accHook = SCNVector3(0,0,0)
+    var gryroHook = SCNVector3(0,0,0)
+    var gyroX:Float = 0
+    var accZ:Float = 0
+    var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// 1から10を生成
-    var calval:Double = 0
+    var calval:Float = 0
     var sendval:Int = 0
     
-    // モーションデータの取得を開始
-    func startSensorUpdates(intervalSeconds:Double) {
-        if motionManager.isDeviceMotionAvailable{
-            motionManager.deviceMotionUpdateInterval = intervalSeconds
-            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
-                self.getMotionData(deviceMotion: motion!)
-            })
-        }
-    }
-
-    // モーションデータの取得（例としてコンソールへ出力）
-    func getMotionData(deviceMotion:CMDeviceMotion) {
+    //フッキングの判定と返す値を決定する関数
+    func Hookngresult() {
         //intervalSeconds * 10 = 取得可能時間
-        //今回は　0.05*10 = 0.5 秒
+        //今回は　0.05*10 = 約0.5 秒
         if (seccount > 10){
-            //処理を終える
-            self.motionManager.stopDeviceMotionUpdates()
-            accZ = fabs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
+            
+            
+            
+            //計測の終了をGameManagerに通知
+            
+            
+            
+            accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
             /*
-            桁数が多いので四捨五入してみる
+            //桁数が多いので四捨五入してみる(使いたいなら)
             gyroX = round(gyroX) / 1000
             accZ = round(accZ) / 1000
             */
@@ -87,7 +97,7 @@ class Hooking{
             calval = gyroX * accZ
             
             switch calval {
-                case 0..<10:// 0から10未満。
+                case 0..<10://0から10未満。
                     sendval = 1
                 case 10..<30:
                     sendval = 2
@@ -107,24 +117,24 @@ class Hooking{
                     sendval = 9
                 case 150..<1000000:
                     sendval = 10
-            default:
+            default://0(動かしていない)の時や、予期せぬ値
               sendval = 0
             }
             print("判定終了 受け渡す値は\(sendval)です")
             
         }else{
             //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
-            if (deviceMotion.rotationRate.x > 0 && deviceMotion.userAcceleration.z < 0){
-                gyroX += deviceMotion.rotationRate.x
-                accZ += deviceMotion.userAcceleration.z
+            if (gryroHook.x > 0 && accHook.z < 0){
+                gyroX += gryroHook.x
+                accZ += accHook.z
                 seccount += 1
-            } else if (deviceMotion.rotationRate.x < 0 && deviceMotion.userAcceleration.z < 0){
+            } else if (gryroHook.x < 0 && accHook.z < 0){
                 //accZのみが正しい値の場合
-                accZ += deviceMotion.userAcceleration.z
+                accZ += accHook.z
                 seccount += 1
-            } else if (deviceMotion.rotationRate.x > 0 && deviceMotion.userAcceleration.z > 0){
+            } else if (gryroHook.x > 0 && accHook.z > 0){
                 //gyroXが正しい値の場合
-                gyroX += deviceMotion.rotationRate.x
+                gyroX += gryroHook.x
                 seccount += 1
             } else {
                 //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
@@ -135,13 +145,14 @@ class Hooking{
         }
     }
     
-    //待機して以上のクラスを実行する関数
-    func sleep(){
+    //ウキが沈む
+    func FloatShinker(){
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
-            //ここにウキが沈むというアクション
             //低音を流して振動で掛かったことを伝える。
-            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
-            self.startSensorUpdates(intervalSeconds:0.05)
+            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
+            //Vizualizerにウキをどのくらい沈めたいかを通知
+            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
+            self.Hookngresult()
         }
     }
 }
@@ -333,8 +344,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBAction func SettingButton(_ sender: Any) {
         //これからやりたいこととしては魚がかかるという動作の後(ウキが沈む)にこの関数を呼び出して、その後端末の動かし具合によって魚のかかり具合を出力すれば良い。
             //関数呼び出し、0.05秒ごとにattitudeなどのデータを出力(print)する。
-            let cl = Hooking()
-            cl.sleep()
+            //let cl = Hooking()
+            //cl.sleep()
             //ここでは「set」ボタンを押した時から0.5秒ごとにattitudeなどのデータを出力(print)する。
         
         if existence{
