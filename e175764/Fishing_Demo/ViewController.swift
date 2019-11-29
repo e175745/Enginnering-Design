@@ -19,6 +19,7 @@ protocol GameScene {
 
 class Visualizer{
     init(){
+        /*
         let objGeometry = SCNSphere(radius: 0.05)
         // Cubeのマテリアルを設定
         let material = SCNMaterial()
@@ -26,6 +27,13 @@ class Visualizer{
         material.diffuse.intensity = 0.8;
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
+        */
+        
+        // Load 3D model of FishingFloat
+        let scene = SCNScene(named: "art.scnassets/Float/Float.scn")!
+        let floatNode = scene.rootNode.childNode(withName: "Float", recursively: true)!
+        floatNode.scale = SCNVector3(0.001, 0.001, 0.001)
+        
     }
     //平面のノードもフィールド変数として必要？
     //カメラポジを取得して, 初期位置を決定
