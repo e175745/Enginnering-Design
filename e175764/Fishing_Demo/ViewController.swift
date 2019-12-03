@@ -11,40 +11,30 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-protocol GameScene {
-    func tap()
-    func release()
-    func update(cameraNode:SCNNode,acc:SCNVector3,rot:SCNVector3)
-}
-
+// Visualizer
+/*
 class Visualizer{
+    //this function must have instance of viewcontroller
     init(){
-        /*
         let objGeometry = SCNSphere(radius: 0.05)
-        // Cubeのマテリアルを設定
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.red
         material.diffuse.intensity = 0.8;
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
-        */
-        
-        // Load 3D model of FishingFloat
-        let scene = SCNScene(named: "art.scnassets/Float/Float.scn")!
-        let floatNode = scene.rootNode.childNode(withName: "Float", recursively: true)!
-        floatNode.scale = SCNVector3(0.001, 0.001, 0.001)
-        
     }
-    //平面のノードもフィールド変数として必要？
-    //カメラポジを取得して, 初期位置を決定
-    //カメラの位置を引数としてとる(ワールド座標系)
+    //Is it required to write the sceneView in here？yes
+    //If not, where the sceneView should be written in?
+    
+    //This is the function to get camera position and to define the initial position of floatNode
+    //This function requires the camera position as Index(World coordinates)
     func moveFloat(to pos:SCNVector3){
         floatNode.position = pos
     }
     func setFloatVel(_ vel:SCNVector3){
         floatVel = vel
     }
-    //重力加速度の計算が未実装
+    //It is unimplemented to calculate gravity yet
     //必要な移動が終了した時にV=0
     func update(){
         let newx = floatPos.x + floatVel.x
@@ -56,16 +46,13 @@ class Visualizer{
     let floatNode:SCNNode
     var floatVel:SCNVector3
 }
-
+ 
 class Casting:GameScene{
     let visual = Visualizer()
     var campos=SCNVector3(0,0,0)
     var vel=SCNVector3(0,0,0)
     //func collision is needed
-    //vel=SCNvector3
-    //isReleased
     //The Visualizer manages the velocity of the float
-    //It is also has to pass
     //This class has to pass the initial posision and velocity of the float to the visualizer
     func update(cameraNode: SCNNode, acc: SCNVector3, rot: SCNVector3) {
         vel = acc
@@ -81,7 +68,7 @@ class Casting:GameScene{
     }
 }
 
-
+*/
 class PlaneNode: SCNNode{
     fileprivate override init() {
         super.init()
@@ -204,23 +191,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             )
         }
     }
-
     
-    // モーションデータの取得を開始
     func startSensorUpdates(intervalSeconds:Double) {
-        motionManager.accelerometerUpdateInterval = intervalSeconds
-        if motionManager.isAccelerometerAvailable{
-            motionManager.startAccelerometerUpdates(
+        motionManager.deviceMotionUpdateInterval = intervalSeconds
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.startDeviceMotionUpdates(
             to: OperationQueue.current!,
-            withHandler: {(accelData: CMAccelerometerData?, errorOC: Error?) in
-                self.outputAccelData(acceleration: accelData!.acceleration)
+            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+                self.outputAccelData(deviceMotion: motion!)
             })
         }
     }
-    func outputAccelData(acceleration: CMAcceleration){
+    
+    func outputAccelData(deviceMotion: CMDeviceMotion){
         //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
     }
-
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         if let planeAnchor = anchor as? ARPlaneAnchor {
         let planeNode = PlaneNode(anchor: planeAnchor)

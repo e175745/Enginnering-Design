@@ -14,6 +14,8 @@
 		615F9D64234EE8C40026090A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 615F9D63234EE8C40026090A /* Assets.xcassets */; };
 		615F9D67234EE8C40026090A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 615F9D65234EE8C40026090A /* LaunchScreen.storyboard */; };
 		615F9D6F234EEA830026090A /* MainDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615F9D6E234EEA830026090A /* MainDisplay.swift */; };
+		6A3057462390E7FC00B2036B /* GameManeger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3057452390E7FC00B2036B /* GameManeger.swift */; };
+		6A7BBBBF2390E8FD00FAF35E /* GameManeger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7BBBBE2390E8FD00FAF35E /* GameManeger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		615F9D66234EE8C40026090A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		615F9D68234EE8C40026090A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		615F9D6E234EEA830026090A /* MainDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainDisplay.swift; sourceTree = "<group>"; };
+		6A3057452390E7FC00B2036B /* GameManeger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GameManeger.swift; path = Fishing_Demo/GameManeger.swift; sourceTree = "<group>"; };
+		6A7BBBBE2390E8FD00FAF35E /* GameManeger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManeger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +46,7 @@
 		615F9D4E234EE8BF0026090A = {
 			isa = PBXGroup;
 			children = (
+				6A3057452390E7FC00B2036B /* GameManeger.swift */,
 				615F9D59234EE8BF0026090A /* Fishing_Demo */,
 				615F9D58234EE8BF0026090A /* Products */,
 			);
@@ -58,6 +63,7 @@
 		615F9D59234EE8BF0026090A /* Fishing_Demo */ = {
 			isa = PBXGroup;
 			children = (
+				6A7BBBBE2390E8FD00FAF35E /* GameManeger.swift */,
 				615F9D5A234EE8BF0026090A /* AppDelegate.swift */,
 				615F9D5C234EE8BF0026090A /* art.scnassets */,
 				615F9D5E234EE8BF0026090A /* ViewController.swift */,
@@ -142,7 +148,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6A7BBBBF2390E8FD00FAF35E /* GameManeger.swift in Sources */,
 				615F9D6F234EEA830026090A /* MainDisplay.swift in Sources */,
+				6A3057462390E7FC00B2036B /* GameManeger.swift in Sources */,
 				615F9D5F234EE8BF0026090A /* ViewController.swift in Sources */,
 				615F9D5B234EE8BF0026090A /* AppDelegate.swift in Sources */,
 			);
