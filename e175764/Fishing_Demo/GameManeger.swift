@@ -51,18 +51,13 @@ class Visualizer{
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
     }
-    //Is it required to write the sceneView in here？
-    //If not, where the sceneView should be written in?
-    
     //This is the function to get camera position and to define the initial position of floatNode
     //This function requires the camera position as Index(World coordinates)
     
     //移動する距離を引数にする. vを利用して上手いこと移動
     
-    func moveFloat(how pos:SCNVector3){
-        //if文で足した分だけ移動したか判定
-        //移動してたらv=0
-        //何秒でその値を移動したいかが必要(0.5秒->1/30)
+    func moveFloat(to pos:SCNVector3){
+        
         floatVel.x = pos.x/30
         floatVel.y = pos.y/30
         floatVel.z = pos.z/30
@@ -220,4 +215,56 @@ class Hooking:GameScene{
     }
 }
 
-
+class Fight:GameScene{
+    
+    let visual = Visualizer()
+    var campos=SCNVector3(0,0,0)
+    var vel=SCNVector3(0,0,0)
+    
+    /*
+    var gettime:Float=0
+    var passtime:Float=0
+    
+    func tap(tapped: Bool) {
+        // 適当に開始時点のDateを用意する
+        let startDate = Date().addingTimeInterval(-180071.3325)
+        // 開始からの経過秒数を取得する
+        let timeInterval = Date().timeIntervalSince(startDate)
+        let time = Float(timeInterval)
+        passtime = time / 60
+        if gettime > passtime{
+            if tapped == true{
+                let objPosition = visual.floatPos
+                let dx = objPosition.x - campos.x / 10.0//移動距離
+                let dz = objPosition.z - campos.z / 10.0
+                // Visualizerにどういう形で返すか議論が必要
+                let movePosition = SCNVector3(dx,0,dz)
+                visual.moveFloat(to: movePosition)
+            }
+        }else{
+            //tap時間終了のコード
+        }
+        
+    }
+    
+    func timer(){
+    }
+    */
+    
+    override func tap() {
+        let objPosition = visual.floatPos
+        let dx = objPosition.x - campos.x / 10.0//移動距離
+        let dz = objPosition.z - campos.z / 10.0
+        // Visualizerにどういう形で返すか議論が必要
+        let movePosition = SCNVector3(dx,0,dz)
+        visual.moveFloat(to: movePosition)
+       
+    }
+    
+    override func update(cameraNode: SCNNode, acc: SCNVector3, gyro: SCNVector3) {
+        vel = acc
+        campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
+    }
+    
+    
+}
