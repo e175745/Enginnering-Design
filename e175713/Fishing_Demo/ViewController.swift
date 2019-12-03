@@ -11,27 +11,140 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-class objectNode: SCNNode{
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+class GameScene {
+    var status : GameStatus
+    init(status:GameStatus){
+        self.status = status
     }
-    override init() {
-    super.init()
-    let objGeometry = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.01)
-//    let objGeometry = SCNSphere(radius: 0.05)
-    geometry=objGeometry
-    name = "obj"
+    func tap(tapped:Bool){
+        
+    }
+    func release(){
+        
+    }
+    func update(cameraNode:SCNNode,acc:SCNVector3,rot:SCNVector3){
+        fatalError()
+    }
     
-    // Cubeのマテリアルを設定
-    let material = SCNMaterial()
-    material.diffuse.contents = UIColor.red
-    material.diffuse.intensity = 0.8;
-    geometry?.materials = [material]
-    let objshape=SCNPhysicsShape(geometry: objGeometry, options: nil)
-    let objbody=SCNPhysicsBody(type: .static, shape: objshape)
-    objbody.restitution = 1.0
-    physicsBody = objbody
+}
+
+class GameStatus{
+    
+}
+
+class Visualizer{
+    init(){
+        let objGeometry = SCNSphere(radius: 0.05)
+        // Cubeのマテリアルを設定
+        let material = SCNMaterial()
+        material.diffuse.contents = UIColor.red
+        material.diffuse.intensity = 0.8;
+        objGeometry.materials = [material]
+        floatNode=SCNNode(geometry: objGeometry)
     }
+    //平面のノードもフィールド変数として必要？
+    //カメラポジを取得して, 初期位置を決定
+    //カメラの位置を引数としてとる(ワールド座標系)
+    func moveFloat(to pos:SCNVector3){
+        floatNode.position = pos
+    }
+    func setFloatVel(_ vel:SCNVector3){
+        floatVel = vel
+    }
+    //重力加速度の計算が未実装
+    //必要な移動が終了した時にV=0
+    func update(){
+        let newx = floatPos.x + floatVel.x
+        let newy = floatPos.y + floatVel.y
+        let newz = floatPos.z + floatVel.z
+        floatNode.position = SCNVector3(newx,newy,newz)
+    }
+    var floatPos:SCNVector3{get{return floatNode.position}}
+    let floatNode:SCNNode
+    var floatVel:SCNVector3
+}
+
+class Casting:GameScene{
+    let visual = Visualizer()
+    var campos=SCNVector3(0,0,0)
+    var vel=SCNVector3(0,0,0)
+    //func collision is needed
+    //vel=SCNvector3
+    //isReleased
+    //The Visualizer manages the velocity of the float
+    //It is also has to pass
+    //This class has to pass the initial posision and velocity of the float to the visualizer
+    override func update(cameraNode: SCNNode, acc: SCNVector3, rot: SCNVector3) {
+        vel = acc
+        campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
+    }
+    
+    func tap() {
+    }
+    
+    override func release(){
+        visual.moveFloat(to:campos)
+        visual.setFloatVel(vel)
+    }
+}
+
+class Fight:GameScene{
+    
+    let visual = Visualizer()
+    var campos=SCNVector3(0,0,0)
+    var vel=SCNVector3(0,0,0)
+    
+    /*
+    var gettime:Float=0
+    var passtime:Float=0
+    
+    func tap(tapped: Bool) {
+        // 適当に開始時点のDateを用意する
+        let startDate = Date().addingTimeInterval(-180071.3325)
+        // 開始からの経過秒数を取得する
+        let timeInterval = Date().timeIntervalSince(startDate)
+        let time = Float(timeInterval)
+        passtime = time / 60
+        if gettime > passtime{
+            if tapped == true{
+                let objPosition = visual.floatPos
+                let dx = objPosition.x - campos.x / 10.0//移動距離
+                let dz = objPosition.z - campos.z / 10.0
+                // Visualizerにどういう形で返すか議論が必要
+                let movePosition = SCNVector3(dx,0,dz)
+                visual.moveFloat(to: movePosition)
+            }
+        }else{
+            //tap時間終了のコード
+        }
+        
+    }
+    
+    func timer(){
+    }
+    */
+    
+    func tap() {
+        let objPosition = visual.floatPos
+        let dx = objPosition.x - campos.x / 10.0//移動距離
+        let dz = objPosition.z - campos.z / 10.0
+        // Visualizerにどういう形で返すか議論が必要
+        let movePosition = SCNVector3(dx,0,dz)
+        visual.moveFloat(to: movePosition)
+       
+    }
+    
+    
+    override func release() {
+        
+    }
+    
+    override func update(cameraNode: SCNNode, acc: SCNVector3, rot: SCNVector3) {
+        vel = acc
+        campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
+    }
+    
+    
 }
 
 class PlaneNode: SCNNode{
@@ -43,30 +156,60 @@ class PlaneNode: SCNNode{
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-}
-
-//森の追加部分
-class Fight{
-    func update_obj_position( fish_x:float_t, fish_z:float_t, camera_x:float_t, camera_z:float_t ) -> (x:float_t, z:float_t){
-        let dx = fish_x - camera_x
-        let dz = fish_z - camera_z
-        let move_x:float_t = dx / 10.0
-        let move_z:float_t = dz / 10.0
-        return (move_x, move_z)
+    init(anchor: ARPlaneAnchor) {
+        super.init()
+        
+        geometry = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        
+        let planeMaterial = SCNMaterial()
+        planeMaterial.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
+        geometry?.materials = [planeMaterial]
+        
+        let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
+        let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
+        physicsBody = planeBody
+        
+        let x = CGFloat(anchor.center.x)
+        let y = CGFloat(anchor.center.y)
+        let z = CGFloat(anchor.center.z)
+        
+        position = SCNVector3(x,y,z)
+        eulerAngles.x = -.pi / 2
     }
+    func update(anchor: ARPlaneAnchor) {
+           
+           (geometry as! SCNPlane).width = CGFloat(anchor.extent.x)
+           (geometry as! SCNPlane).height = CGFloat(anchor.extent.z)
+    
+           let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
+           let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
+           physicsBody = planeBody
+           
+           let x = CGFloat(anchor.center.x)
+           let y = CGFloat(anchor.center.y)
+           let z = CGFloat(anchor.center.z)
+           position = SCNVector3(x,y,z)
+       }
 }
-
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    let cast = Casting(status: <#GameStatus#>)
+    let motionManager = CMMotionManager()
+    @IBAction func startCasting(_ sender: UIButton) {
+        startSensorUpdates(intervalSeconds: 0.01)
+    }
+        
+    @IBAction func endCasting(_ sender: UIButton) {
+        motionManager.stopAccelerometerUpdates()
+        cast.release()
+    }
+    
     @IBOutlet var sceneView: ARSCNView!
     
     var existence = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let scene = SCNScene()
         // Set the view's delegate
         sceneView.delegate = self
@@ -87,8 +230,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // longPress
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressView))
         sceneView.addGestureRecognizer(longPressGesture)
-        
-        
+    
         // オムニライトを追加
         let lightNode = SCNNode()
         lightNode .light = SCNLight()
@@ -99,9 +241,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // 森の追加部分
         //PickUpButton.isEnabled = false
         let myGesture = UITapGestureRecognizer(target: self, action: #selector(PickUp))
-        PickUpButton.addGestureRecognizer(myGesture)
         
+        //時間経過の処理
+        //取得時間の計算
+        var gettime:Float = 10//ともあきからもらう値(0~10)　* 基本時間(=1のとき0~10秒)
+        //経過時間の計算
+        if  gettime > 0{
+            let startDate = Date().addingTimeInterval(-180071.3325)
+            let timeInterval = Date().timeIntervalSince(startDate)
+            let time = Float(timeInterval)
+            let passtime = time / 60
+            if gettime > passtime{
+                FightButton.addGestureRecognizer(myGesture)
+            }else{
+                // 終了の処理
+                FightButton.isEnabled = false
+                gettime = 0
+            }
+        }
+        // GameStatusに釣れたかどうかの成否を渡す(Flagを立てる)
     }
+
     
     @IBAction func Sinker(_ sender: Any) {
         if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
@@ -114,7 +274,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 //action2,
                 ])
             )
-            
         }
     }
     
@@ -130,71 +289,44 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 action1,
                 ])
             )
-            PickUpButton.isEnabled = true
         }
     }
-    
-    let motionManager = CMMotionManager()
-    
-    func getMotionData(deviceMotion:CMDeviceMotion) {
-//        print("attitudeX:", deviceMotion.attitude.pitch)
-//        print("attitudeY:", deviceMotion.attitude.roll)
-//        print("attitudeZ:", deviceMotion.attitude.yaw)
-//        print("gyroX:", deviceMotion.rotationRate.x)
-//        print("gyroY:", deviceMotion.rotationRate.y)
-//        print("gyroZ:", deviceMotion.rotationRate.z)
-//        print("gravityX:", deviceMotion.gravity.x)
-//        print("gravityY:", deviceMotion.gravity.y)
-//        print("gravityZ:", deviceMotion.gravity.z)
-//        print("accX:", deviceMotion.userAcceleration.x)
-//        print("accY:", deviceMotion.userAcceleration.y)
-//        print("accZ:", deviceMotion.userAcceleration.z)
-    }
+
     
     // モーションデータの取得を開始
     func startSensorUpdates(intervalSeconds:Double) {
-        motionManager.deviceMotionUpdateInterval = intervalSeconds
-        if motionManager.isDeviceMotionAvailable{
-            motionManager.startDeviceMotionUpdates(to: OperationQueue.current!, withHandler: {(motion:CMDeviceMotion?, error:Error?) in
-                self.getMotionData(deviceMotion: motion!)
+        motionManager.accelerometerUpdateInterval = intervalSeconds
+        if motionManager.isAccelerometerAvailable{
+            motionManager.startAccelerometerUpdates(
+            to: OperationQueue.current!,
+            withHandler: {(accelData: CMAccelerometerData?, errorOC: Error?) in
+                self.outputAccelData(acceleration: accelData!.acceleration)
             })
         }
     }
+    func outputAccelData(acceleration: CMAcceleration){
+        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
+    }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-       
-           // 平面ジオメトリを作成
-           let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                                   height: CGFloat(planeAnchor.extent.z))
-           geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
-
-           // 平面ジオメトリを持つノードを作成
-           let planeNode = SCNNode(geometry: geometry)
-               //x-z平面に合わせる
-           planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+        let planeNode = PlaneNode(anchor: planeAnchor)
            DispatchQueue.main.async(execute: {
-               // 検出したアンカーに対応するノードに子ノードとして持たせる
                node.addChildNode(planeNode)
            })
+        }
        }
        
        // 更新されたとき
        func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-
            DispatchQueue.main.async(execute: {
                // 平面ジオメトリのサイズを更新
-               for childNode in node.childNodes {
-                   guard let plane = childNode.geometry as? SCNPlane else {continue}
-                   plane.width = CGFloat(planeAnchor.extent.x)
-                   plane.height = CGFloat(planeAnchor.extent.z)
-                   break
+               if let planeAnchor = anchor as? ARPlaneAnchor, let planeNode = node.childNodes[0] as? PlaneNode {
+                   // ノードの位置及び形状を修正する
+                   planeNode.update(anchor: planeAnchor)
                }
            })
        }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -215,16 +347,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
     
+    //Delete this function
+    //Make the function whichi uses Timer
+    //In this function, it has to be written update function
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard let camera = sceneView.pointOfView else {
             return
         }
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-                let cameraPos = SCNVector3Make(0, 0, -0.5)
+                let cameraPos=cast.campos
                 let position = camera.convertPosition(cameraPos, to: nil)
                 objNode.position = position
-                
+                cast.update(cameraNode:cameraPos,acc: Float(cast.yvel),rot: Float(cast.zvel))
             }
         }
     }
@@ -243,28 +378,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
-    
-    
+
     
     @objc func tapView(sender: UIGestureRecognizer) {
         existence = false
         
         if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-    
-            let location = sender.location(in: sceneView)
-            let hitTestResult = sceneView.hitTest(location, types: .existingPlane)
-        
-            if let result = hitTestResult.first {
-                objNode.physicsBody=SCNPhysicsBody()
-                // オブジェクトを飛ばす
-                let target = SCNVector3Make(
-                    result.worldTransform.columns.3.x,
-                    result.worldTransform.columns.3.y + 0.1,
-                    result.worldTransform.columns.3.z)
-                let action = SCNAction.move(to: target, duration: 2)
-                objNode.runAction(action)
-            }
-        }
+
+            if let camera = sceneView.pointOfView { // カメラを取得
+                    // カメラの向いてる方向を計算
+                    let mat = camera.transform
+                    let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 0.1, -1 * mat.m33)
+                    // 上方向に位置を補正
+                objNode.physicsBody?.isAffectedByGravity=true
+                    objNode.physicsBody?.applyForce(dir, asImpulse: true)
+                }
+                
+                // カメラを取得
+                // カメラの向いてる方向を計算
+                /*
+                let mat = camera.transform
+                let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 0.1, -1 * mat.m33)
+                // 上方向に位置を補正
+                objNode.position = SCNVector3Make(camera.position.x, camera.position.y - 0.01, camera.position.z)
+                objNode.physicsBody?.applyForce(dir, asImpulse: true)
+                */
+    }
     }
     
     @objc func longPressView(sender: UILongPressGestureRecognizer) {
@@ -280,92 +419,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
-    @IBAction func DeleteKey(_ sender: Any) {
-        // sessionを停止
-        sceneView.session.pause()
-        // 全てのNodeに対して処理を行う
-        sceneView.scene.rootNode.enumerateChildNodes {(node, _) in
-        // Nodeを削除
-        node.removeFromParentNode()
-        }
-        // sessionを再開
-        sceneView.session.run(ARWorldTrackingConfiguration())
-    }
+
     
     @IBAction func SettingButton(_ sender: Any) {
-        startSensorUpdates(intervalSeconds: 1.0)
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
                 
                 let homePosi = SCNVector3(0,0,-0.5)
                 let action = SCNAction.move(to: homePosi, duration: 1)
+                objNode.physicsBody?.isAffectedByGravity=false
                 objNode.runAction(action)
             }
         }else{
             // Cubeを作成
             // let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-            let objNode = objectNode()
+            let objNode = PlaneNode()
             sceneView.scene.rootNode.addChildNode(objNode)
             existence = true
-            
         }
     }
-    
-    //森の追加部分
-    //var tapCount = 0
-    //var countResetTimer: Timer!
-    
-    var newFight = Fight()
-    @IBOutlet weak var PickUpButton: UIButton!
-    
+    let newFight = Fight(status: <#GameStatus#>)
+    @IBOutlet weak var FightButton: UIButton!
     @objc func PickUp(_ sender: UIGestureRecognizer){
         print("tap")
-            
-            if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-                //let position = SCNVector3(x: 0, y: 0, z: -0.5)
-                if let camera = sceneView.pointOfView {
-                    print(camera.position)
-                    print(objNode.position)
-                    let moveValue = newFight.update_obj_position(fish_x: objNode.position.x, fish_z: objNode.position.z, camera_x: camera.position.x, camera_z: camera.position.z)
-                    let moving = SCNVector3(-moveValue.x,0,-moveValue.z)
-                    let action = SCNAction.move(by:moving, duration: 1)
-                    objNode.runAction(
-                        SCNAction.sequence([
-                        action,
-                        ])
-                    )
-                }
-                /*
-                let position = SCNVector3(x: 0, y: 0, z: -0.5) // ノードの位置は、左右：0m 上下：0m　奥に50cm
-                if let camera = sceneView.pointOfView {
-                    objNode.look(at: camera.position)
-                    
-                    tapCount += 1 // ボタンを押すとカウントをあげる
-                    print(tapCount)
-                    if tapCount == 10{
-                        SCNTransaction.begin()
-                        SCNTransaction.animationDuration = 2.0
-                        objNode.position = camera.convertPosition(position, to: nil)
-                        SCNTransaction.commit()
-                    }
-                    
-                    countResetTimer = Timer.scheduledTimer(
-                    timeInterval: 10,
-                    target: self,
-                    selector: #selector(self.countReset),
-                    userInfo: nil,
-                    repeats: true)
-              
-                }*/
-            
-            }
-    
-     }
-    /*
-    @objc func countReset() {
-        tapCount = 0
-    }*/
+        newFight.tap(tapped:true)
+    }
 
 }
-
-
