@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Fishing_Demo
 //
-//  Created by 松本　カズマ on 2019/10/10.
+//  Created by 仲西 智章 on 2019/10/10.
 //  Copyright © 2019 Spike. All rights reserved.
 //
 
@@ -53,7 +53,6 @@ class Visualizer{
 
 //ここから仲西
 class Hooking:GameScene{
-    
     //let visual=Vizualizer()
     func tap(){}
     func release(){}
@@ -74,30 +73,31 @@ class Hooking:GameScene{
     //フッキングの判定と返す値を決定する関数
     func Hookngresult() {
         //intervalSeconds * 10 = 取得可能時間
-        //今回は　0.05*10 = 約0.5 秒
-        if (seccount > 10){
+        //判定時間　0.03(位置の取得の更新)*16(カウンタ数) = 約0.5 秒
+        if (seccount > 16){
             
             
             
-            //計測の終了をGameManagerに通知
+            //計測の終了をGameManagerに通知(位置の取得{CMMotionManager}を終了させる。)
             
             
             
             accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
+            
             /*
             //桁数が多いので四捨五入してみる(使いたいなら)
             gyroX = round(gyroX) / 1000
             accZ = round(accZ) / 1000
+            print("取得したgyroXの値は \(gyroX) です")
+            print("取得したaccZの値は \(accZ) です")
+            print("取得したsendvalの値は \(sendval) です")
             */
-            //print("取得したgyroXの値は \(gyroX) です")
-            //print("取得したaccZの値は \(accZ) です")
-            //print("取得したsendvalの値は \(sendval) です")
             
             //取得した値を掛け算する
             calval = gyroX * accZ
             
             switch calval {
-                case 0..<10://0から10未満。
+                case 0..<10:// 0から10未満。
                     sendval = 1
                 case 10..<30:
                     sendval = 2
@@ -121,18 +121,20 @@ class Hooking:GameScene{
               sendval = 0
             }
             print("判定終了 受け渡す値は\(sendval)です")
+            //森健に値を引き渡す。(classの処理が全て終了)
+            
             
         }else{
             //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
-            if (gryroHook.x > 0 && accHook.z < 0){
+            if (gryroHook.x >= 0 && accHook.z <= 0){
                 gyroX += gryroHook.x
                 accZ += accHook.z
                 seccount += 1
-            } else if (gryroHook.x < 0 && accHook.z < 0){
+            } else if (gryroHook.x < 0 && accHook.z <= 0){
                 //accZのみが正しい値の場合
                 accZ += accHook.z
                 seccount += 1
-            } else if (gryroHook.x > 0 && accHook.z > 0){
+            } else if (gryroHook.x >= 0 && accHook.z > 0){
                 //gyroXが正しい値の場合
                 gyroX += gryroHook.x
                 seccount += 1
@@ -148,10 +150,10 @@ class Hooking:GameScene{
     //ウキが沈む
     func FloatShinker(){
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
+            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
+            //Vizualizerにウキをどのくらい沈めたいかを通知
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
-            //Vizualizerにウキをどのくらい沈めたいかを通知
-            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
             self.Hookngresult()
         }
     }
@@ -344,8 +346,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBAction func SettingButton(_ sender: Any) {
         //これからやりたいこととしては魚がかかるという動作の後(ウキが沈む)にこの関数を呼び出して、その後端末の動かし具合によって魚のかかり具合を出力すれば良い。
             //関数呼び出し、0.05秒ごとにattitudeなどのデータを出力(print)する。
-            //let cl = Hooking()
-            //cl.sleep()
+            let cl = Hooking()
+            cl.FloatShinker()
             //ここでは「set」ボタンを押した時から0.5秒ごとにattitudeなどのデータを出力(print)する。
         
         if existence{
