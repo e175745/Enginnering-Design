@@ -11,6 +11,11 @@ import SceneKit
 import ARKit
 import CoreMotion
 
+class UIController: UIViewController{
+    func heimenn_kennti(){
+        return heimen_anchor
+    }
+}
 // Visualizer
 /*
 class Visualizer{
@@ -131,7 +136,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var existence = false
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        //GameManegerがインスタンス生成
         let scene = SCNScene()
         // Set the view's delegate
         sceneView.delegate = self
