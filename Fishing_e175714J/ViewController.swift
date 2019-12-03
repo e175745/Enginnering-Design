@@ -11,11 +11,20 @@ import SceneKit
 import ARKit
 import CoreMotion
 
+class GameScene {
+    init(status:GameStatus){
+        self.status=status
+    }
+    var status : GameStatus
+    func tap(){}
+    func release(){}
+    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
+        fatalError()
+    }
+}
 
-protocol GameScene {
-    func tap()
-    func release()
-    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3)
+class GameStatus{
+    var HitCondition:Int=0
 }
 
 class Visualizer{
@@ -50,13 +59,14 @@ class Visualizer{
     var floatVel = SCNVector3(0,0,0)
 }
 
-
 //ここから仲西
+/*
+let cl = Hooking()
+cl.FloatShinker()
+*/
 class Hooking:GameScene{
     //let visual=Vizualizer()
-    func tap(){}
-    func release(){}
-    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
+    override func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
         accHook = acc//using accHook.Z
         gryroHook = gyro//using gryroHook.X
     }
@@ -96,6 +106,7 @@ class Hooking:GameScene{
             //取得した値を掛け算する
             calval = gyroX * accZ
             
+            
             switch calval {
                 case 0..<10:// 0から10未満。
                     sendval = 1
@@ -120,10 +131,9 @@ class Hooking:GameScene{
             default://0(動かしていない)の時や、予期せぬ値
               sendval = 0
             }
-            print("判定終了 受け渡す値は\(sendval)です")
-            //森健に値を引き渡す。(classの処理が全て終了)
-            
-            
+            //Gamestatusに値を引き渡す。(classの処理が全て終了)
+            status.HitCondition = sendval
+            //print("判定終了 受け渡す値は\(sendval)です")
         }else{
             //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
             if (gryroHook.x >= 0 && accHook.z <= 0){
@@ -154,6 +164,7 @@ class Hooking:GameScene{
             //Vizualizerにウキをどのくらい沈めたいかを通知
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
+            //ここで魚の情報が決定する。
             self.Hookngresult()
         }
     }
@@ -344,11 +355,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     @IBAction func SettingButton(_ sender: Any) {
-        //これからやりたいこととしては魚がかかるという動作の後(ウキが沈む)にこの関数を呼び出して、その後端末の動かし具合によって魚のかかり具合を出力すれば良い。
-            //関数呼び出し、0.05秒ごとにattitudeなどのデータを出力(print)する。
-            let cl = Hooking()
-            cl.FloatShinker()
-            //ここでは「set」ボタンを押した時から0.5秒ごとにattitudeなどのデータを出力(print)する。
         
         if existence{
             if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
