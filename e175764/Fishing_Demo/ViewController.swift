@@ -10,13 +10,92 @@ import UIKit
 import SceneKit
 import ARKit
 import CoreMotion
-/*
-class UIController: UIViewController{
-    func heimenn_kennti(){
-        return heimen_anchor
+
+
+//変面けんち
+//DeviceMotion
+
+class UIController: ViewController{
+    
+    var deviceRot=SCNVector3(0,0,0)
+    var deviceAcc=SCNVector3(0,0,0)
+    var camera=SCNNode()
+    
+    func startSensorUpdates(intervalSeconds:Double) {
+        motionManager.deviceMotionUpdateInterval = intervalSeconds
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.startDeviceMotionUpdates(
+            to: OperationQueue.current!,
+            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+                self.setRot(deviceMotion: motion!)
+                self.setAcc(deviceMotion: motion!)
+            })
+        }
     }
+    
+    // カメラポジションを返す関数
+    func cameraNode(_ session: ARSession, didUpdate frame: ARFrame) -> SCNNode {
+        if let camera = sceneView.pointOfView { // カメラを取得
+            /*
+            // カメラの向いてる方向を計算
+            let mat = camera.transform
+            let cameraPosition = SCNVector3(mat.m31, mat.m32, mat.m33)
+            return cameraPosition
+            */
+            return camera
+        }
+        return SCNNode()
+    }
+    // デバイスの加速度を返す関数
+    func setAcc(deviceMotion: CMDeviceMotion){
+        let x=deviceMotion.userAcceleration.x
+        let y=deviceMotion.userAcceleration.y
+        let z=deviceMotion.userAcceleration.z
+        deviceAcc=SCNVector3(x,y,z)
+    }
+    // デバイスの角速度を返す関数
+    func setRot(deviceMotion: CMDeviceMotion){
+        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
+        let x=deviceMotion.rotationRate.x
+        let y=deviceMotion.rotationRate.y
+        let z=deviceMotion.rotationRate.z
+        deviceRot=SCNVector3(x,y,z)
+    }
+    
+    func sendCamera()->SCNNode{
+        return camera
+    }
+    
+    func deviceAccelarate()->SCNVector3{
+        return deviceAcc
+    }
+    
+    func deviceRotation()->SCNVector3{
+        return deviceRot
+    }
+    
+    // 平面検知する関数
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+        let planeNode = PlaneNode(anchor: planeAnchor)
+           DispatchQueue.main.async(execute: {
+               node.addChildNode(planeNode)
+           })
+        }
+       }
+       
+       // 更新されたとき
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+           DispatchQueue.main.async(execute: {
+               // 平面ジオメトリのサイズを更新
+               if let planeAnchor = anchor as? ARPlaneAnchor, let planeNode = node.childNodes[0] as? PlaneNode {
+                   // ノードの位置及び形状を修正する
+                   planeNode.update(anchor: planeAnchor)
+               }
+           })
+       }
+   
 }
- */
 
 class PlaneNode: SCNNode{
     fileprivate override init() {
@@ -36,10 +115,6 @@ class PlaneNode: SCNNode{
         planeMaterial.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
         geometry?.materials = [planeMaterial]
         
-        let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
-        let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
-        physicsBody = planeBody
-        
         let x = CGFloat(anchor.center.x)
         let y = CGFloat(anchor.center.y)
         let z = CGFloat(anchor.center.z)
@@ -51,24 +126,27 @@ class PlaneNode: SCNNode{
            
            (geometry as! SCNPlane).width = CGFloat(anchor.extent.x)
            (geometry as! SCNPlane).height = CGFloat(anchor.extent.z)
-    
-           let planeShape = SCNPhysicsShape(geometry: geometry!, options: nil)
-           let planeBody = SCNPhysicsBody(type: .static, shape: planeShape)
-           physicsBody = planeBody
            
            let x = CGFloat(anchor.center.x)
            let y = CGFloat(anchor.center.y)
            let z = CGFloat(anchor.center.z)
            position = SCNVector3(x,y,z)
-       }
+    }
 }
+
+//ViewContoller に必要な機能.
+//viewDid_load
+//ボタンの制御
+
+
 
 class ViewController: UIViewController, ARSCNViewDelegate {
     let motionManager = CMMotionManager()
     let game = GameManager()
     let visual = Visualizer()
+    let ui = UIController()
     @IBAction func startCasting(_ sender: UIButton) {
-        startSensorUpdates(intervalSeconds: 0.01)
+        ui.startSensorUpdates(intervalSeconds: 0.01)
     }
         
     @IBAction func endCasting(_ sender: UIButton) {
@@ -92,15 +170,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // デバックオプション
         sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
-        
-        // tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapView))
-        sceneView.addGestureRecognizer(tapGesture)
-        
-        // longPress
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressView))
-        sceneView.addGestureRecognizer(longPressGesture)
-    
         // オムニライトを追加
         /*
         let lightNode = SCNNode()
@@ -110,58 +179,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         visual.scene.rootNode.addChildNode(lightNode )
         */
     }
-
     
 
-    
-    //shake motion
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-    override func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-            let action1 = SCNAction.moveBy(x: 0, y: 0.3, z: 0, duration: 0.5)
-            objNode.runAction(
-                SCNAction.sequence([
-                action1,
-                ])
-            )
-        }
-    }
-    
-    func startSensorUpdates(intervalSeconds:Double) {
-        motionManager.deviceMotionUpdateInterval = intervalSeconds
-        if motionManager.isDeviceMotionAvailable{
-            motionManager.startDeviceMotionUpdates(
-            to: OperationQueue.current!,
-            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
-                self.outputAccelData(deviceMotion: motion!)
-            })
-        }
-    }
-    
-    func outputAccelData(deviceMotion: CMDeviceMotion){
-        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
-    }
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        if let planeAnchor = anchor as? ARPlaneAnchor {
-        let planeNode = PlaneNode(anchor: planeAnchor)
-           DispatchQueue.main.async(execute: {
-               node.addChildNode(planeNode)
-           })
-        }
-       }
-       
-       // 更新されたとき
-    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        DispatchQueue.main.async(execute: {
-            // 平面ジオメトリのサイズを更新
-            if let planeAnchor = anchor as? ARPlaneAnchor, let planeNode = node.childNodes[0] as? PlaneNode {
-                   // ノードの位置及び形状を修正する
-                    planeNode.update(anchor: planeAnchor)
-            }
-        })
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -195,36 +214,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
-    }
-
-    
-    @objc func tapView(sender: UIGestureRecognizer) {
-        existence = false
-        
-        if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-
-            if let camera = sceneView.pointOfView { // カメラを取得
-                    // カメラの向いてる方向を計算
-                    let mat = camera.transform
-                    let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32 + 0.1, -1 * mat.m33)
-                    // 上方向に位置を補正
-                objNode.physicsBody?.isAffectedByGravity=true
-                    objNode.physicsBody?.applyForce(dir, asImpulse: true)
-        }
-    }
-    }
-    
-    @objc func longPressView(sender: UILongPressGestureRecognizer) {
-        if sender.state == .began {
-            let location = sender.location(in: sceneView)
-            let hitTest  = sceneView.hitTest(location)
-            if let result = hitTest.first  {
-                if result.node.name == "obj"
-                {
-                    result.node.removeFromParentNode();
-                }
-            }
-        }
     }
 
 }

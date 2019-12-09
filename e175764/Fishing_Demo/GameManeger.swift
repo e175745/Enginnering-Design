@@ -22,6 +22,32 @@ class GameManager{
     let cast:Casting
     let hook:Hooking
     let fight:Fight
+    let visual=Visualizer()
+    let ui = UIController()
+    
+    //updateを1/60秒ごとに呼び出す処理
+    var timer = Timer() // タイマー変数
+    
+    func viewDidLoad() {
+        timer = Timer.scheduledTimer(
+                    timeInterval: 1/60,//実行する時間(分数は使えるのか？)
+                    target: self,
+                    selector: #selector(self.UpdateValue),//実行関数
+                    userInfo: nil,
+                    repeats: true
+        )
+    }
+    //Timerで実行する処理
+    @objc func UpdateValue() {
+        // 1/60秒ごとに実行する処理
+        // UIControlerから値を受け取って実際の値を代入していく？
+        hook.update(cameraNode:ui.sendCamera(),acc:ui.deviceAccelarate(),gyro:ui.deviceRotation())
+        cast.update(cameraNode:ui.sendCamera(),acc:ui.deviceAccelarate(),gyro:ui.deviceRotation())
+        fight.update(cameraNode:ui.sendCamera(),acc:ui.deviceAccelarate(),gyro:ui.deviceRotation())
+        visual.update()
+        //timerを終了させる。(いつ終了させるのか？)
+        //timer.invalidate()
+    }
 }
 
 
@@ -65,11 +91,27 @@ class Visualizer{
         material.diffuse.intensity = 0.8;
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
+       /*
+        let planeGeometry = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        
+        let planeMaterial = SCNMaterial()
+        planeMaterial.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
+        geometry?.materials = [planeMaterial]
+        planeNode=SCNNode(geometry: planeGeometry)
+        */
         //scene.rootNode.addChildNode(BaseNode)?
     }
     //This is the function to get camera position and to define the initial position of floatNode
     //This function requires the camera position as Index(World coordinates)
     //移動する距離を引数にする. vを利用して上手いこと移動
+    
+    //rendererから呼ばれる関数
+    func setBasePos(anchor: ARPlaneAnchor){
+        let x = CGFloat(anchor.center.x)
+        let y = CGFloat(anchor.center.y)
+        let z = CGFloat(anchor.center.z)
+        BaseNode.position = SCNVector3(x,y,z)
+    }
     
     func moveFloat(to how:SCNVector3){
         let oldPos:SCNVector3 = floatPos
@@ -97,6 +139,7 @@ class Visualizer{
     var floatPos:SCNVector3{get{return floatNode.position}}
     let floatNode:SCNNode
     var floatVel=SCNVector3(0,0,0)
+    //var planeNode:SCNNode
     //anchorの位置にbaseNodeを移動のやり方。
     //add childNodeはどのタイミング->インスタンス生成時?
     var BaseNode=SCNNode()
