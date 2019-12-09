@@ -9,17 +9,32 @@
 import ARKit
 import Foundation
 import CoreMotion
+import SceneKit
 
 //timer
 class GameManager{
-    
+    init(){
+        cast=Casting(status: gamestatus)
+        hook=Hooking(status: cast.status)
+        fight=Fight(status: hook.status)
+    }
+    let gamestatus=GameStatus()
+    let cast:Casting
+    let hook:Hooking
+    let fight:Fight
 }
+
+
 class GameStatus{
+    init(){
+        HitCondition=0
+        FightResult=true
+    }
     //魚の情報<かかった瞬間に決定される(未実装)
     //かかり具合<-智章が書き換える　＜＜ケンタが参照
-    var HitCondition:Int=0
+    var HitCondition:Int
     //釣れたか釣れてないか <- ケンタが決定
-    var FightResult:Bool=true
+    var FightResult:Bool
 }
 
 class GameScene {
@@ -50,19 +65,21 @@ class Visualizer{
         material.diffuse.intensity = 0.8;
         objGeometry.materials = [material]
         floatNode=SCNNode(geometry: objGeometry)
+        //scene.rootNode.addChildNode(BaseNode)?
     }
     //This is the function to get camera position and to define the initial position of floatNode
     //This function requires the camera position as Index(World coordinates)
-    
     //移動する距離を引数にする. vを利用して上手いこと移動
     
-    func moveFloat(to pos:SCNVector3){
-        
-        floatVel.x = pos.x/30
-        floatVel.y = pos.y/30
-        floatVel.z = pos.z/30
+    func moveFloat(to how:SCNVector3){
+        let oldPos:SCNVector3 = floatPos
+        while(oldPos.x + how.x != floatPos.x && oldPos.y + how.y != floatPos.y && oldPos.z + how.z != floatPos.z){
+            //how割る30が必要->60fpsなら0.5秒で移動
+            setFloatVel(how)
+        }
+        setFloatVel(SCNVector3(0,0,0))
     }
-    //target まで移動(updateを使用)
+
     func setInitialPos(to campos:SCNVector3){
         floatNode.position = campos
     }
@@ -71,17 +88,25 @@ class Visualizer{
         floatVel = vel
     }
     //It is unimplemented to calculate gravity yet
-    //必要な移動が終了した時にV=0
     func update(){
-        let newx = floatPos.x + floatVel.x * 0.01
-        let newy = floatPos.y + floatVel.y * 0.01
-        let newz = floatPos.z + floatVel.z * 0.01
+        let newx = floatPos.x + floatVel.x
+        let newy = floatPos.y + floatVel.y
+        let newz = floatPos.z + floatVel.z
         floatNode.position = SCNVector3(newx,newy,newz)
     }
     var floatPos:SCNVector3{get{return floatNode.position}}
     let floatNode:SCNNode
     var floatVel=SCNVector3(0,0,0)
+    //anchorの位置にbaseNodeを移動のやり方。
+    //add childNodeはどのタイミング->インスタンス生成時?
+    var BaseNode=SCNNode()
+    let scene = SCNScene()
 }
+
+
+
+
+
 
 class Casting:GameScene{
     let visual = Visualizer()
@@ -91,6 +116,7 @@ class Casting:GameScene{
     //The Visualizer manages the velocity of the float
     //This class has to pass the initial posision and velocity of the float to the visualizer
     override func update(cameraNode: SCNNode, acc: SCNVector3, gyro: SCNVector3) {
+        //*0.01が必要
         vel = acc
         campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
     }
