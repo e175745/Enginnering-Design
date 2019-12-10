@@ -16,23 +16,6 @@ import CoreMotion
 //DeviceMotion
 
 class UIController: ViewController{
-    
-    var deviceRot=SCNVector3(0,0,0)
-    var deviceAcc=SCNVector3(0,0,0)
-    var camera=SCNNode()
-    
-    func startSensorUpdates(intervalSeconds:Double) {
-        motionManager.deviceMotionUpdateInterval = intervalSeconds
-        if motionManager.isDeviceMotionAvailable{
-            motionManager.startDeviceMotionUpdates(
-            to: OperationQueue.current!,
-            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
-                self.setRot(deviceMotion: motion!)
-                self.setAcc(deviceMotion: motion!)
-            })
-        }
-    }
-    
     // カメラポジションを返す関数
     func cameraNode(_ session: ARSession, didUpdate frame: ARFrame) -> SCNNode {
         if let camera = sceneView.pointOfView { // カメラを取得
@@ -45,21 +28,6 @@ class UIController: ViewController{
             return camera
         }
         return SCNNode()
-    }
-    // デバイスの加速度を返す関数
-    func setAcc(deviceMotion: CMDeviceMotion){
-        let x=deviceMotion.userAcceleration.x
-        let y=deviceMotion.userAcceleration.y
-        let z=deviceMotion.userAcceleration.z
-        deviceAcc=SCNVector3(x,y,z)
-    }
-    // デバイスの角速度を返す関数
-    func setRot(deviceMotion: CMDeviceMotion){
-        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
-        let x=deviceMotion.rotationRate.x
-        let y=deviceMotion.rotationRate.y
-        let z=deviceMotion.rotationRate.z
-        deviceRot=SCNVector3(x,y,z)
     }
     
     func sendCamera()->SCNNode{
@@ -141,12 +109,41 @@ class PlaneNode: SCNNode{
 
 
 class ViewController: UIViewController, ARSCNViewDelegate {
+    var deviceRot=SCNVector3(0,0,0)
+    var deviceAcc=SCNVector3(0,0,0)
+    var camera=SCNNode()
     let motionManager = CMMotionManager()
     let game = GameManager()
     let visual = Visualizer()
-    let ui = UIController()
+    
+    func startSensorUpdates(intervalSeconds:Double) {
+        motionManager.deviceMotionUpdateInterval = intervalSeconds
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.startDeviceMotionUpdates(
+            to: OperationQueue.current!,
+            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+                self.setRot(deviceMotion: motion!)
+                self.setAcc(deviceMotion: motion!)
+            })
+        }
+    }
+    // デバイスの加速度を返す関数
+    func setAcc(deviceMotion: CMDeviceMotion){
+        let x=deviceMotion.userAcceleration.x
+        let y=deviceMotion.userAcceleration.y
+        let z=deviceMotion.userAcceleration.z
+        deviceAcc=SCNVector3(x,y,z)
+    }
+    // デバイスの角速度を返す関数
+    func setRot(deviceMotion: CMDeviceMotion){
+        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
+        let x=deviceMotion.rotationRate.x
+        let y=deviceMotion.rotationRate.y
+        let z=deviceMotion.rotationRate.z
+        deviceRot=SCNVector3(x,y,z)
+    }
     @IBAction func startCasting(_ sender: UIButton) {
-        ui.startSensorUpdates(intervalSeconds: 0.01)
+        startSensorUpdates(intervalSeconds: 0.01)
     }
         
     @IBAction func endCasting(_ sender: UIButton) {
