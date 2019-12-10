@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Fishing_Demo
 //
-//  Created by 仲西 智章 on 2019/10/10.
+//  Created by 仲西　智章 on 2019/10/10.
 //  Copyright © 2019 Spike. All rights reserved.
 //
 
@@ -11,175 +11,151 @@ import SceneKit
 import ARKit
 import CoreMotion
 
-class GameScene {
-    init(status:GameStatus){
-        self.status=status
-    }
-    var status : GameStatus
-    func tap(){}
-    func release(){}
-    func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
-        fatalError()
-    }
-}
 
-class GameStatus{
-    var HitCondition:Int=0
-}
+//変面けんち
+//DeviceMotion
 
-class Visualizer{
-    init(){
-        let objGeometry = SCNSphere(radius: 0.05)
-        // Cubeのマテリアルを設定
-        let material = SCNMaterial()
-        material.diffuse.contents = UIColor.red
-        material.diffuse.intensity = 0.8;
-        objGeometry.materials = [material]
-        floatNode=SCNNode(geometry: objGeometry)
-    }
-    //平面のノードもフィールド変数として必要？
-    //カメラポジを取得して, 初期位置を決定
-    //カメラの位置を引数としてとる(ワールド座標系)
-    func moveFloat(to pos:SCNVector3){
-        floatNode.position = pos
-    }
-    func setFloatVel(_ vel:SCNVector3){
-        floatVel = vel
-    }
-    //重力加速度の計算が未実装
-    //必要な移動が終了した時にV=0
-    func update(){
-        let newx = floatPos.x + floatVel.x
-        let newy = floatPos.y + floatVel.y
-        let newz = floatPos.z + floatVel.z
-        floatNode.position = SCNVector3(newx,newy,newz)
-    }
-    var floatPos:SCNVector3{get{return floatNode.position}}
-    let floatNode:SCNNode
-    var floatVel = SCNVector3(0,0,0)
-}
-
-//ここから仲西
-/*
-let cl = Hooking()
-cl.FloatShinker()
-*/
-class Hooking:GameScene{
-    //let visual=Vizualizer()
-    override func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
-        accHook = acc//using accHook.Z
-        gryroHook = gyro//using gryroHook.X
-    }
-    
-    var accHook = SCNVector3(0,0,0)
-    var gryroHook = SCNVector3(0,0,0)
-    var gyroX:Float = 0
-    var accZ:Float = 0
-    var seccount:Float = 0
-    var WaitTime = Double.random(in: 1 ... 10)// 1から10を生成
-    var calval:Float = 0
-    var sendval:Int = 0
-    
-    //フッキングの判定と返す値を決定する関数
-    func Hookngresult() {
-        //intervalSeconds * 10 = 取得可能時間
-        //判定時間　0.03(位置の取得の更新)*16(カウンタ数) = 約0.5 秒
-        if (seccount > 16){
-            
-            
-            
-            //計測の終了をGameManagerに通知(位置の取得{CMMotionManager}を終了させる。)
-            
-            
-            
-            accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
-            
+class UIController: ViewController{
+    // カメラポジションを返す関数
+    func cameraNode(_ session: ARSession, didUpdate frame: ARFrame) -> SCNNode {
+        if let camera = sceneView.pointOfView { // カメラを取得
             /*
-            //桁数が多いので四捨五入してみる(使いたいなら)
-            gyroX = round(gyroX) / 1000
-            accZ = round(accZ) / 1000
-            print("取得したgyroXの値は \(gyroX) です")
-            print("取得したaccZの値は \(accZ) です")
-            print("取得したsendvalの値は \(sendval) です")
+            // カメラの向いてる方向を計算
+            let mat = camera.transform
+            let cameraPosition = SCNVector3(mat.m31, mat.m32, mat.m33)
+            return cameraPosition
             */
-            
-            //取得した値を掛け算する
-            calval = gyroX * accZ
-            
-            
-            switch calval {
-                case 0..<10:// 0から10未満。
-                    sendval = 1
-                case 10..<30:
-                    sendval = 2
-                case 30..<50:
-                    sendval = 3
-                case 50..<70:
-                    sendval = 4
-                case 70..<90:
-                    sendval = 5
-                case 90..<110:
-                    sendval = 6
-                case 110..<130:
-                    sendval = 7
-                case 130..<140:
-                    sendval = 8
-                case 140..<150:
-                    sendval = 9
-                case 150..<1000000:
-                    sendval = 10
-            default://0(動かしていない)の時や、予期せぬ値
-              sendval = 0
-            }
-            //Gamestatusに値を引き渡す。(classの処理が全て終了)
-            status.HitCondition = sendval
-            //print("判定終了 受け渡す値は\(sendval)です")
-        }else{
-            //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
-            if (gryroHook.x >= 0 && accHook.z <= 0){
-                gyroX += gryroHook.x
-                accZ += accHook.z
-                seccount += 1
-            } else if (gryroHook.x < 0 && accHook.z <= 0){
-                //accZのみが正しい値の場合
-                accZ += accHook.z
-                seccount += 1
-            } else if (gryroHook.x >= 0 && accHook.z > 0){
-                //gyroXが正しい値の場合
-                gyroX += gryroHook.x
-                seccount += 1
-            } else {
-                //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
-                seccount += 0.5
-            }
-            //print(gyroX)
-            //print(accZ)
+            return camera
         }
+        return SCNNode()
     }
     
-    //ウキが沈む
-    func FloatShinker(){
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
-            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
-            //Vizualizerにウキをどのくらい沈めたいかを通知
-            //低音を流して振動で掛かったことを伝える。
-            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
-            //ここで魚の情報が決定する。
-            self.Hookngresult()
+    func sendCamera()->SCNNode{
+        return camera
+    }
+    
+    func deviceAccelarate()->SCNVector3{
+        return deviceAcc
+    }
+    
+    func deviceRotation()->SCNVector3{
+        return deviceRot
+    }
+    
+    // 平面検知する関数
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        if let planeAnchor = anchor as? ARPlaneAnchor {
+        let planeNode = PlaneNode(anchor: planeAnchor)
+           DispatchQueue.main.async(execute: {
+               node.addChildNode(planeNode)
+           })
         }
+       }
+       
+       // 更新されたとき
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+           DispatchQueue.main.async(execute: {
+               // 平面ジオメトリのサイズを更新
+               if let planeAnchor = anchor as? ARPlaneAnchor, let planeNode = node.childNodes[0] as? PlaneNode {
+                   // ノードの位置及び形状を修正する
+                   planeNode.update(anchor: planeAnchor)
+               }
+           })
+       }
+   
+}
+
+class PlaneNode: SCNNode{
+    fileprivate override init() {
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(anchor: ARPlaneAnchor) {
+        super.init()
+        
+        geometry = SCNPlane(width: CGFloat(anchor.extent.x), height: CGFloat(anchor.extent.z))
+        
+        let planeMaterial = SCNMaterial()
+        planeMaterial.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
+        geometry?.materials = [planeMaterial]
+        
+        let x = CGFloat(anchor.center.x)
+        let y = CGFloat(anchor.center.y)
+        let z = CGFloat(anchor.center.z)
+        
+        position = SCNVector3(x,y,z)
+        eulerAngles.x = -.pi / 2
+    }
+    func update(anchor: ARPlaneAnchor) {
+           
+           (geometry as! SCNPlane).width = CGFloat(anchor.extent.x)
+           (geometry as! SCNPlane).height = CGFloat(anchor.extent.z)
+           
+           let x = CGFloat(anchor.center.x)
+           let y = CGFloat(anchor.center.y)
+           let z = CGFloat(anchor.center.z)
+           position = SCNVector3(x,y,z)
     }
 }
+
+//ViewContoller に必要な機能.
+//viewDid_load
+//ボタンの制御
+
+
 
 class ViewController: UIViewController, ARSCNViewDelegate {
-
+    var deviceRot=SCNVector3(0,0,0)
+    var deviceAcc=SCNVector3(0,0,0)
+    var camera=SCNNode()
+    let motionManager = CMMotionManager()
+    let game = GameManager()
+    let visual = Visualizer()
+    
+    func startSensorUpdates(intervalSeconds:Double) {
+        motionManager.deviceMotionUpdateInterval = intervalSeconds
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.startDeviceMotionUpdates(
+            to: OperationQueue.current!,
+            withHandler: {(motion:CMDeviceMotion?, error:Error?) in
+                self.setRot(deviceMotion: motion!)
+                self.setAcc(deviceMotion: motion!)
+            })
+        }
+    }
+    // デバイスの加速度を返す関数
+    func setAcc(deviceMotion: CMDeviceMotion){
+        let x=deviceMotion.userAcceleration.x
+        let y=deviceMotion.userAcceleration.y
+        let z=deviceMotion.userAcceleration.z
+        deviceAcc=SCNVector3(x,y,z)
+    }
+    // デバイスの角速度を返す関数
+    func setRot(deviceMotion: CMDeviceMotion){
+        //GameManagerのフィールド変数に加速度を渡す(SCNVector3)
+        let x=deviceMotion.rotationRate.x
+        let y=deviceMotion.rotationRate.y
+        let z=deviceMotion.rotationRate.z
+        deviceRot=SCNVector3(x,y,z)
+    }
+    @IBAction func startCasting(_ sender: UIButton) {
+        startSensorUpdates(intervalSeconds: 0.01)
+    }
+        
+    @IBAction func endCasting(_ sender: UIButton) {
+        motionManager.stopAccelerometerUpdates()
+    }
+    
     @IBOutlet var sceneView: ARSCNView!
     
     var existence = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let scene = SCNScene()
+        //Visualizerがインスタンス生成
         // Set the view's delegate
         sceneView.delegate = self
         
@@ -187,77 +163,21 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.showsStatistics = true
         
         // Set the scene to the view
-        sceneView.scene = scene
+        //sceneView.scene = visual.scene
         
         // デバックオプション
         sceneView.debugOptions = ARSCNDebugOptions.showFeaturePoints
-        
-        // tap
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapView))
-        sceneView.addGestureRecognizer(tapGesture)
-        
-        // longPress
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressView))
-        sceneView.addGestureRecognizer(longPressGesture)
-        
         // オムニライトを追加
+        /*
         let lightNode = SCNNode()
         lightNode .light = SCNLight()
         lightNode .light!.type = .omni
         lightNode .position = SCNVector3(x: 0, y: 10, z: 10)
-         scene.rootNode.addChildNode(lightNode )
-        
+        visual.scene.rootNode.addChildNode(lightNode )
+        */
     }
     
-    @IBAction func Sinker(_ sender: Any) {
-        if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-            let action1 = SCNAction.moveBy(x: 0, y: -0.3, z: 0, duration: 0.5)
-           
-           // let action2 = SCNAction.moveBy(x: 0, y: 0.03, z: 0, duration: 1)
-            objNode.runAction(
-                SCNAction.sequence([
-                action1,
-                //action2,
-                ])
-            )
-        }
-    }
 
-
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-       
-           // 平面ジオメトリを作成
-           let geometry = SCNPlane(width: CGFloat(planeAnchor.extent.x),
-                                   height: CGFloat(planeAnchor.extent.z))
-           geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
-
-           // 平面ジオメトリを持つノードを作成
-           let planeNode = SCNNode(geometry: geometry)
-               //x-z平面に合わせる
-           planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
-
-           DispatchQueue.main.async(execute: {
-               // 検出したアンカーに対応するノードに子ノードとして持たせる
-               node.addChildNode(planeNode)
-           })
-       }
-       
-       // 更新されたとき
-       func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-           guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-
-           DispatchQueue.main.async(execute: {
-               // 平面ジオメトリのサイズを更新
-               for childNode in node.childNodes {
-                   guard let plane = childNode.geometry as? SCNPlane else {continue}
-                   plane.width = CGFloat(planeAnchor.extent.x)
-                   plane.height = CGFloat(planeAnchor.extent.z)
-                   break
-               }
-           })
-       }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -278,20 +198,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.pause()
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        guard let camera = sceneView.pointOfView else {
-            return
-        }
-        if existence{
-            if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-                let cameraPos = SCNVector3Make(0, 0, -0.5)
-                let position = camera.convertPosition(cameraPos, to: nil)
-                objNode.position = position
-                
-            }
-        }
-    }
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -306,80 +212,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
-    
-    
-    @objc func tapView(sender: UIGestureRecognizer) {
-        existence = false
-        
-        if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-    
-            let location = sender.location(in: sceneView)
-            let hitTestResult = sceneView.hitTest(location, types: .existingPlane)
-        
-            if let result = hitTestResult.first {
-            
-                // オブジェクトを飛ばす
-                let target = SCNVector3Make(
-                    result.worldTransform.columns.3.x,
-                    result.worldTransform.columns.3.y + 0.1,
-                    result.worldTransform.columns.3.z)
-                let action = SCNAction.move(to: target, duration: 2)
-                objNode.runAction(action)
-            }
-        }
-    }
-    
-    @objc func longPressView(sender: UILongPressGestureRecognizer) {
-        if sender.state == .began {
-            let location = sender.location(in: sceneView)
-            let hitTest  = sceneView.hitTest(location)
-            if let result = hitTest.first  {
-                if result.node.name == "obj"
-                {
-                    result.node.removeFromParentNode();
-                }
-            }
-        }
-    }
-    
-    @IBAction func DeleteKey(_ sender: Any) {
-        // sessionを停止
-        sceneView.session.pause()
-        // 全てのNodeに対して処理を行う
-        sceneView.scene.rootNode.enumerateChildNodes {(node, _) in
-        // Nodeを削除
-        node.removeFromParentNode()
-        }
-        // sessionを再開
-        sceneView.session.run(ARWorldTrackingConfiguration())
-    }
-    
-    @IBAction func SettingButton(_ sender: Any) {
-        
-        if existence{
-            if let objNode = sceneView.scene.rootNode.childNode(withName: "obj", recursively: true){
-                
-                let homePosi = SCNVector3(0,0,-0.5)
-                let action = SCNAction.move(to: homePosi, duration: 1)
-                objNode.runAction(action)
-            }
-        }else{
-            // Cubeを作成
-            // let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-            let obj = SCNSphere(radius: 0.05)
-            let objNode = SCNNode(geometry: obj)
-            objNode.name = "obj"
-            
-            // Cubeのマテリアルを設定
-            let material = SCNMaterial()
-            material.diffuse.contents = UIColor.red
-            material.diffuse.intensity = 0.8;
-            objNode.geometry?.materials = [material]
-            
-            // Cubeの座標を設定
-            objNode.position = SCNVector3(0,0,-0.5)
-            sceneView.scene.rootNode.addChildNode(objNode)
-            existence = true
-        }
-    }
+
 }
+
