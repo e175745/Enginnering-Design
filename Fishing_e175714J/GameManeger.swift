@@ -27,27 +27,8 @@ class GameManager{
     let visual=Visualizer()
     let ui = UIController()
 
-    
-//    func judgcl(proend:Int){//処理を終えたか
-//        //どのクラスの処理が呼び出されているのかを判定。
-//        switch proend {
-//        case 1://ここはproend(processend)=cast------------->次の処理であるHookingを呼び出す。
-//                let hook=Hooking(status:procl.status)
-//                procl=hook
-//                break
-//        case 2://ここはproend(processend)=hook------------->次の処理であるfightを呼び出す。
-//                let fight=Fight(status:procl.status)
-//                procl=fight
-//                break
-//        default:
-//            break
-//        }
-//    }
-
     //Timerで実行する処理
     @objc func UpdateValue() {
-        //処理が終えたかのフラグを受け取る。
-        //self.judgcl(proend:procl.status.proend)
         // 1/60秒ごとに実行する処理、UIControlerから値を受け取って現在の値を代入
         scene.update(cameraNode:ui.sendCamera(),acc:ui.deviceAccelarate(),gyro:ui.deviceRotation())
         visual.update()
@@ -99,7 +80,7 @@ class Visualizer{
     //SceneNodeのrootNodeにadd
     
     init(){
-        scene =
+        //scene = onechance使う(よく分かってない)
         let objGeometry = SCNSphere(radius: 0.05)
         let material = SCNMaterial()
         material.diffuse.contents = UIColor.red
@@ -187,8 +168,8 @@ class Casting:GameScene{
         visual.setInitialPos(to:campos)
         visual.setFloatVel(vel)
     }
+    
     override func next() -> GameScene? {
-        
         if isFinished() {
             return Hooking(status: status)
         }else {
@@ -228,7 +209,7 @@ class Hooking:GameScene{
             
             
             //計測の終了をGameManagerに通知(位置の取得{CMMotionManager}を終了させる。)
-            status.proend=1//Gamestatusに処理の終了の通知
+            //Gamestatusに処理の終了の通知
             
             
             accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
@@ -245,36 +226,19 @@ class Hooking:GameScene{
             //取得した値を掛け算する
             calval = gyroX * accZ
             
-            
             switch calval {
-                case 0..<10:// 0から10未満。
+                case 0..<10://1の判定
                     sendval = 1
                     break
-                case 10..<30:
-                    sendval = 2
+                case 10..<130://2~7までの判定
+                    calval = (calval+30)/20
+                    sendval = Int(round(calval))
                     break
-                case 30..<50:
-                    sendval = 3
+                case 130..<150://8~9の判定
+                    calval = (calval-50)/10
+                    sendval = Int(round(calval))
                     break
-                case 50..<70:
-                    sendval = 4
-                    break
-                case 70..<90:
-                    sendval = 5
-                    break
-                case 90..<110:
-                    sendval = 6
-                    break
-                case 110..<130:
-                    sendval = 7
-                    break
-                case 130..<140:
-                    sendval = 8
-                    break
-                case 140..<150:
-                    sendval = 9
-                    break
-                case 150..<1000000:
+                case 150..<1000000://10の判定
                     sendval = 10
                     break
                 default://0(動かしていない)の時や、予期せぬ値
@@ -282,7 +246,7 @@ class Hooking:GameScene{
                     break
             }
             //Gamestatusに値を引き渡す。(classの処理が全て終了)
-            status.HitCondition = sendval
+            return status.HitCondition = sendval
             //print("判定終了 受け渡す値は\(sendval)です")
         }else{
             //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
@@ -318,6 +282,17 @@ class Hooking:GameScene{
             self.Hookngresult()
         }
     }
+    
+    override func next() -> GameScene? {
+        
+        if isFinished() {
+            return Fight(status: status)
+        }else {
+            return nil
+        }
+    }
+    func isFinished() -> Bool { return false }
+    
 }
 
 class Fight:GameScene{
