@@ -202,9 +202,11 @@ class Hooking:GameScene{
     
     //フッキングの判定と返す値を決定する関数
     func Hookngresult() {
-        //intervalSeconds * 10 = 取得可能時間
-        //判定時間　0.03(位置の取得の更新)*16(カウンタ数) = 約0.5 秒
         if (seccount > 16){
+            /*
+            intervalSeconds * 10 = 取得可能時間
+            判定時間　0.03(位置の取得の更新)*16(カウンタ数) = 約0.5 秒
+            */
             
             
             
@@ -215,9 +217,6 @@ class Hooking:GameScene{
             accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
             
             /*
-            //桁数が多いので四捨五入してみる(使いたいなら)
-            gyroX = round(gyroX) / 1000
-            accZ = round(accZ) / 1000
             print("取得したgyroXの値は \(gyroX) です")
             print("取得したaccZの値は \(accZ) です")
             print("取得したsendvalの値は \(sendval) です")
@@ -241,13 +240,14 @@ class Hooking:GameScene{
                 case 150..<1000000://10の判定
                     sendval = 10
                     break
-                default://0(動かしていない)の時や、予期せぬ値
+                default://0(動かしていない時)や、予期せぬ値
                     sendval = 0
                     break
             }
             //Gamestatusに値を引き渡す。(classの処理が全て終了)
             return status.HitCondition = sendval
             //print("判定終了 受け渡す値は\(sendval)です")
+            
         }else{
             //画面上の動き(acc_z)が上向き(-Z方向),画面の回転(gyro_x)が手前側(+X方向)の時に値を取得する。
             if (gryroHook.x >= 0 && accHook.z <= 0){
@@ -266,8 +266,6 @@ class Hooking:GameScene{
                 //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
                 seccount += 0.5
             }
-            //print(gyroX)
-            //print(accZ)
         }
     }
     
@@ -286,7 +284,7 @@ class Hooking:GameScene{
     override func next() -> GameScene? {
         
         if isFinished() {
-            return Fight(status: status)
+            return Fight(status: status)//Fightに移行する。
         }else {
             return nil
         }
