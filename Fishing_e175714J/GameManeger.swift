@@ -14,16 +14,16 @@ import SceneKit
 //timer
 class GameManager{
     init(){
-        scene=Casting(status: GameStatus())//一旦pcocl(procces-class)に今の呼び出している処理のクラスを入れる。
+        scene=Casting(status: GameStatus())//一旦sceneに今の呼び出している処理のクラスを入れる。
         Timer.scheduledTimer(
-            timeInterval: 1/60,//実行する時間(分数は使えるのか？)
+            timeInterval: 1/60,//実行する時間
             target: self,
             selector: #selector(self.UpdateValue),//実行関数
             userInfo: nil,
             repeats: true
         )
     }
-    var scene:GameScene//呼び出している処理のクラスは更新される為、verで定義する。
+    var scene:GameScene//呼び出しているクラスは更新される為、verで定義する。
     let visual=Visualizer()
     let ui = UIController()
 
@@ -179,7 +179,6 @@ class Casting:GameScene{
     
     func isFinished() -> Bool { return false }
 }
-//ここから仲西
 /*
 let cl = Hooking()
 cl.FloatShinker()
@@ -196,12 +195,12 @@ class Hooking:GameScene{
     var gyroX:Float = 0
     var accZ:Float = 0
     var seccount:Float = 0
-    var WaitTime = Double.random(in: 1 ... 10)// 1から10を生成
+    var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
     var calval:Float = 0
     var sendval:Int = 0
     
     //フッキングの判定と返す値を決定する関数
-    func Hookngresult() {
+    func Hookingresult() {
         if (seccount > 16){
             /*
             intervalSeconds * 10 = 取得可能時間
@@ -277,7 +276,7 @@ class Hooking:GameScene{
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
-            self.Hookngresult()
+            self.Hooknigresult()
         }
     }
     
