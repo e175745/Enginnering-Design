@@ -276,7 +276,7 @@ class Hooking:GameScene{
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
-            self.Hooknigresult()
+            self.Hookingresult()
         }
     }
     
