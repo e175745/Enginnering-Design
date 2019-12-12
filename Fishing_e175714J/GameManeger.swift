@@ -14,7 +14,7 @@ import SceneKit
 //timer
 class GameManager{
     init(){
-        scene=Casting(status: GameStatus())//一旦sceneに今の呼び出している処理のクラスを入れる。
+        scene=Casting(status: GameStatus(),visual: self.visual)//一旦sceneに今の呼び出している処理のクラスを入れる。
         Timer.scheduledTimer(
             timeInterval: 1/60,//実行する時間
             target: self,
@@ -36,6 +36,7 @@ class GameManager{
         if let next_scene = scene.next() {
             scene = next_scene
         }
+        //Timer.invalidate() //Timerの終了
     }
 }
 
@@ -57,19 +58,21 @@ class GameStatus{
 }
 
 class GameScene {
-    init(status:GameStatus){
+    init(status:GameStatus,visual:Visualizer){
         self.status=status
+        self.visual=visual
     }
     var status : GameStatus
-    
+    var visual : Visualizer
     func tap(){}
     func release(){}
     func update(cameraNode:SCNNode,acc:SCNVector3,gyro:SCNVector3){
         fatalError()
     }
-    func next() -> GameScene? {}
+    func next() -> GameScene? {
+        return nil
+    }
 }
-
 
 class Visualizer{
     //平面ノードの位置
@@ -148,7 +151,6 @@ class Visualizer{
 
 
 class Casting:GameScene{
-    let visual = Visualizer()
     var campos=SCNVector3(0,0,0)
     var vel=SCNVector3(0,0,0)
     //func collision is needed
@@ -171,12 +173,11 @@ class Casting:GameScene{
     
     override func next() -> GameScene? {
         if isFinished() {
-            return Hooking(status: status)
+            return Hooking(status: status, visual: visual)
         }else {
             return nil
         }
     }
-    
     func isFinished() -> Bool { return false }
 }
 /*
@@ -204,7 +205,7 @@ class Hooking:GameScene{
         if (seccount > 16){
             /*
             intervalSeconds * 10 = 取得可能時間
-            判定時間　0.03(位置の取得の更新)*16(カウンタ数) = 約0.5 秒
+            判定時間　1/60(位置の取得の更新)*30(カウンタ数) = 約0.5 秒
             */
             
             
@@ -281,9 +282,8 @@ class Hooking:GameScene{
     }
     
     override func next() -> GameScene? {
-        
         if isFinished() {
-            return Fight(status: status)//Fightに移行する。
+            return Fight(status: status,visual: visual)//Fightに移行する。
         }else {
             return nil
         }
@@ -293,8 +293,6 @@ class Hooking:GameScene{
 }
 
 class Fight:GameScene{
-    
-    let visual = Visualizer()
     var campos=SCNVector3(0,0,0)
     var vel=SCNVector3(0,0,0)
     
@@ -335,7 +333,6 @@ class Fight:GameScene{
         // Visualizerにどういう形で返すか議論が必要
         let movePosition = SCNVector3(dx,0,dz)
         visual.moveFloat(to: movePosition)
-       
     }
     
     override func update(cameraNode: SCNNode, acc: SCNVector3, gyro: SCNVector3) {
@@ -343,5 +340,9 @@ class Fight:GameScene{
         campos = cameraNode.convertPosition(SCNVector3(0,0,0),to:nil)
     }
     
+    func isFinished() -> Bool { return false }
+    /*
+    処理が終了した場合、isFinished()にtrueを代入する。
+    */
     
 }
