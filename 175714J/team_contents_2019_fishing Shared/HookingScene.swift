@@ -41,8 +41,7 @@ class HookingScene: GameSceneBase {
             case .waiting:
                 self.waittimer()
                 break
-            case .hooking:
-//画面上の動き(acc.z)が上向き(-Z方向),画面の回転(gyro.x)が手前側(+X方向)の時に値を取得する。
+            case .hooking://画面上の動き(acc.z)が上向き(-Z方向),画面の回転(gyro.x)が手前側(+X方向)の時に値を取得する。
                 if(seccount < 15){//intervalseconds(1F)*15 = 0.5秒
                     if (HookGryro.x >= 0 && HookAcc.z <= 0){
                         gyroX += HookGryro.x
