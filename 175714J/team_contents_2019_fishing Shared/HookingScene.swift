@@ -120,7 +120,7 @@ class HookingScene: GameSceneBase {
 }
 
 
-class ResultSceneDummy: GameSceneBase {//Fightクラスに移行するようにする。
+class ResultSceneDummy: GameSceneBase {//Fightクラスに移行するようにする？
     override func nextScene() -> GameScene? {
         return nil
     }
