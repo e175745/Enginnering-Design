@@ -37,20 +37,18 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     var gyro=SCNVector3(0,0,0)
     var plane=SCNVector3(0,0,0)
     let timerInterval = 0.033
+    let testnode=SCNNode()
 
     init(sceneRenderer renderer: SCNSceneRenderer, view: View) {
         sceneRenderer = renderer
         self.view = view
-        
-        visualizer = FishingVisualizer()
-        sceneRenderer.scene = visualizer.scene
+        visualizer = FishingVisualizer(arScene:sceneRenderer.scene!)
         status = GameStatus()
         
         let skscene = SKScene(size: CGSize(width: view.frame.width, height: view.frame.height))
         skscene.isUserInteractionEnabled = false
         renderer.overlaySKScene = skscene
         visualizer.overlay = skscene
-        
         super.init()
         
         prepareScene()
@@ -89,8 +87,9 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     func onTimer() {
         let center = SCNVector3(view.frame.width/2, view.frame.height/2, 0)
         let optical_axis = SCNVector3(view.frame.width/2, view.frame.height/2, 1)
-
-        pointOfView = sceneRenderer.unprojectPoint(center)
+        
+        guard let base = sceneRenderer.scene?.rootNode.childNode(withName: "base", recursively: true) else {return}
+        pointOfView = sceneRenderer.unprojectPoint(center)-base.position
         directionOfView = (sceneRenderer.unprojectPoint(optical_axis)-pointOfView!).normalized
         
         visualizer.update(deltaTime: timerInterval)
@@ -118,7 +117,6 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         node!.position = pointOfView! + directionOfView!*10
         
         #endif
-        
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {

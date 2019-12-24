@@ -34,8 +34,6 @@ class HookingScene: GameSceneBase {
     }
     
     override func update(acc: SCNVector3, gyro: SCNVector3) {
-        print(acc)
-        print(gyro)
     }
 }
 
