@@ -10,12 +10,21 @@ import Foundation
 import SceneKit
 
 class HookingScene: GameSceneBase {
-    enum State {
-        case wating
+    var HookAcc = SCNVector3(0,0,0)
+    var HookGryro = SCNVector3(0,0,0)
+    var gyroX:Float = 0
+    var accZ:Float = 0
+    var seccount:Float = 0
+    var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
+    var calval:Float = 0
+    var sendval:Int = 0
+    
+    enum State {//処理のグループ分け
+        case waiting
         case hooking
     }
     
-    var state = State.wating
+    var state = State.waiting
     
     override func nextScene() -> GameScene? {
         if state == .hooking {
@@ -28,24 +37,54 @@ class HookingScene: GameSceneBase {
     override func update(acc:SCNVector3,gyro:SCNVector3){
         HookAcc = acc//using HookAcc.Z
         HookGryro = gyro//using HookGryro.X
+        switch self.state{
+            case .waiting:
+                self.waittimer()
+                break
+            case .hooking:
+//画面上の動き(acc.z)が上向き(-Z方向),画面の回転(gyro.x)が手前側(+X方向)の時に値を取得する。
+                if(seccount < 15){//intervalseconds(1F)*15 = 0.5秒
+                    if (HookGryro.x >= 0 && HookAcc.z <= 0){
+                        gyroX += HookGryro.x
+                        accZ += HookAcc.z
+                        seccount += 1
+                    } else if (HookGryro.x < 0 && HookAcc.z <= 0){
+                        //accZのみが正しい値の場合
+                        accZ += HookAcc.z
+                        seccount += 1
+                    } else if (HookGryro.x >= 0 && HookAcc.z > 0){
+                        //gyroXが正しい値の場合
+                        gyroX += HookGryro.x
+                        seccount += 1
+                    } else {
+                        //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
+                        //(動かしていない場合、処理が終わらないことを防ぐ為)
+                        seccount += 0.5
+                    }
+                }else if (seccount >= 15){//終了時(0.5秒後)にHookingresultを呼び出す
+                    self.Hookingresult()
+                    break
+                }else{
+                    print("Hookingクラスのseccountが正しい動作をしていません")
+                    break
+            }
+        }
     }
-    var HookAcc = SCNVector3(0,0,0)
-    var HookGryro = SCNVector3(0,0,0)
-    var gyroX:CGFloat = 0
-    var accZ:CGFloat = 0
-    var seccount:Float = 0
-    var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
-    var calval:Float = 0
-    var sendval:Int = 0
-
+    func waittimer(){
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
+            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
+            //Vizualizerにウキをどのくらい沈めたいかを通知
+            //低音を流して振動で掛かったことを伝える。
+            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
+            //ここで魚の情報が決定する。
+            self.state = State.hooking//hookingに移行する
+        }
+    }
+    
     //フッキングの判定と返す値を決定する関数
-    func Hookingresult() {
-        if (seccount > 15){//intervalseconds*15 = 0.5秒
-            
+    func Hookingresult(){
             accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
-            
             calval = Float(gyroX * accZ)//取得した値を掛け算する
-            
             calval /= 1.5//判定値のカウンタが10カウントを基準に測ったため
             
             switch calval {
@@ -69,52 +108,19 @@ class HookingScene: GameSceneBase {
             }
             //Gamestatusに値を引き渡す。(classの処理が全て終了)
             return gameStatus.HitCondition = sendval
-            
-        }else{
-        //画面上の動き(acc.z)が上向き(-Z方向),画面の回転(gyro.x)が手前側(+X方向)の時に値を取得する。
-            if (HookGryro.x >= 0 && HookAcc.z <= 0){
-                gyroX += HookGryro.x
-                accZ += HookAcc.z
-                seccount += 1
-            } else if (HookGryro.x < 0 && HookAcc.z <= 0){
-                //accZのみが正しい値の場合
-                accZ += HookAcc.z
-                seccount += 1
-            } else if (HookGryro.x >= 0 && HookAcc.z > 0){
-                //gyroXが正しい値の場合
-                gyroX += HookGryro.x
-                seccount += 1
-            } else {
-                //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
-                //(動かしていない場合、処理が終わらないことを防ぐ為)
-                seccount += 0.5
-            }
-        }
-    }
-
-    //ウキが沈む
-    func FloatShinker(){
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
-            //GameMnanagerにウキが沈んだことを伝える。(ウキが沈むというアクション)
-            //Vizualizerにウキをどのくらい沈めたいかを通知
-            //低音を流して振動で掛かったことを伝える。
-            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
-            //ここで魚の情報が決定する。
-            self.Hookingresult()
-        }
     }
     
-    override func touched() {
+    override func touched() {//？
         state = .hooking
     }
     
-    override func name() -> String {
+    override func name() -> String {//？
         return "Hooking"
     }
 }
 
 
-class ResultSceneDummy: GameSceneBase {
+class ResultSceneDummy: GameSceneBase {//Fightクラスに移行するようにする。
     override func nextScene() -> GameScene? {
         return nil
     }

@@ -34,9 +34,15 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     var scene: GameScene? //これは集約
     
     let timerInterval = 0.033
+    var ACC = SCNVector3(0,0,0)
+    var GYRO = SCNVector3(0,0,0)
     
-    var Acceleration = SCNVector3(0,0,0)
-    var rotationRate = SCNVector3(0,0,0)
+    func Acceleration(acc:SCNVector3){
+        self.ACC = acc
+    }
+    func rotationRate(gyro:SCNVector3){
+        self.GYRO = gyro
+    }
 
     init(sceneRenderer renderer: SCNSceneRenderer, view: View) {
         sceneRenderer = renderer
@@ -87,7 +93,7 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         status.viewVector = directionOfView!
         
         if let scene = self.scene {
-            scene.update(acc: Acceleration,gyro: rotationRate)
+            scene.update(acc: self.ACC,gyro: self.GYRO)
             visualizer.showText(name: "state", text: scene.name(), at: CGPoint(x:0,y:30))
             if let nextScene = scene.nextScene() {
                 self.scene = nextScene
