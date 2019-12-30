@@ -140,10 +140,9 @@ class HookingScene: GameSceneBase {
                     sendval = 0
                     break
             }
-        //Gamestatusに値を引き渡す。(classの処理が全て終了)
-        gameStatus.HitCondition = sendval
+        gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
         print(sendval)
-        state = State.hookingend
+        state = State.hookingend//sceneの切り替え
     }
     
     override func touched() {//？
