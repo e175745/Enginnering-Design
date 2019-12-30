@@ -70,6 +70,8 @@ class Visualizer
         return ob
     }
     
+    
+    
     func showText(name:String, text:String, at:CGPoint) {
         if let overlay = self.overlay {
             var pos = at
@@ -117,6 +119,28 @@ class FishingVisualizer : Visualizer
         floatObject = makeObject(with: dummyFloat)
     }
     
+    func makeLine(status:GameStatus){
+        if !status.holding{
+        if let base=scene.rootNode.childNode(withName: "base", recursively: true){
+        if let float=floatObject{
+            let from = SCNVector3(status.eyePoint.x+status.viewVector.x*0.1,status.eyePoint.y+status.viewVector.y*0.1+0.4,status.eyePoint.z+status.viewVector.z*0.1)
+            let to = float.position
+            if let oldLineObject = base.childNode(withName:"line",recursively: true){
+                oldLineObject.removeFromParentNode()
+                }
+            let source = SCNGeometrySource(vertices: [from, to])
+            let indices: [Int32] = [0, 1]
+            let element = SCNGeometryElement(indices: indices, primitiveType: .line)
+            let line = SCNGeometry(sources: [source], elements: [element])
+            line.firstMaterial?.lightingModel = SCNMaterial.LightingModel.blinn
+            let dummyLine = SCNNode(geometry: line)
+            dummyLine.geometry?.firstMaterial?.emission.contents = SCNColor.white
+            dummyLine.name="line"
+            base.addChildNode(dummyLine)
+        }
+    }
+    }
+    }
     func moveFloat(to: SCNVector3) {
         floatObject!.position = to
         //print(floatObject!.position)

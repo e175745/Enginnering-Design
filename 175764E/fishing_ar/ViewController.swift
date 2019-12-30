@@ -45,6 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         gameController.touchEnd()
+        gameController.status.holding=false
         motionManager.stopAccelerometerUpdates()
     }
     
@@ -117,7 +118,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor){
         if anchor is ARImageAnchor{
         let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
-        self.gameController.plane_pos(pos:position)
         if let base = self.gameController.visualizer.scene.rootNode.childNode(withName: "base", recursively: true){
             if let plane = base.childNode(withName: "plane", recursively: true){
             base.position=position

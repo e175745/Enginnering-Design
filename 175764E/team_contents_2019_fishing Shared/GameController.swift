@@ -35,7 +35,6 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     
     var acc=SCNVector3(0,0,0)
     var gyro=SCNVector3(0,0,0)
-    var plane=SCNVector3(0,0,0)
     let timerInterval = 0.033
     let testnode=SCNNode()
 
@@ -59,9 +58,6 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         }
     }
     
-    func plane_pos(pos:SCNVector3){
-        self.plane = pos
-    }
     
     func setAcc(acc:SCNVector3){
         self.acc = acc
@@ -93,12 +89,12 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         directionOfView = (sceneRenderer.unprojectPoint(optical_axis)-pointOfView!).normalized
         
         visualizer.update(deltaTime: timerInterval)
-        
+        visualizer.makeLine(status: self.status)
         status.eyePoint = pointOfView!
         status.viewVector = directionOfView!
         
         if let scene = self.scene {
-            scene.update(acc:self.acc,gyro:self.plane)
+            scene.update(acc:self.acc,gyro:self.gyro)
             visualizer.showText(name: "state", text: scene.name(), at: CGPoint(x:0,y:30))
             
             if let nextScene = scene.nextScene() {

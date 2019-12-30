@@ -12,8 +12,9 @@ import SceneKit
 class GameStatus {
     var eyePoint = SCNVector3()   //視点（カメラの位置)
     var viewVector = SCNVector3() //視線ベクトル（カメラの向き）
-    var HitCondition = 0
+    var holding = true
     var result = "small fish"
+    var HitCondition=0
 }
 
 protocol GameScene {
