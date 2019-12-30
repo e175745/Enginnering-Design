@@ -19,8 +19,7 @@ class HookingScene: GameSceneBase {
     var Fishrarity = Int.random(in: 1 ... 10)//魚のレア度をランダムに決定
     var calval:Float = 0
     var sendval:Int = 0
-    var waitend:Int = 0
-    //var Hookend:Int = 0
+    var waitend:Bool = false
     
     enum State {//処理のグループ分け
         case waiting
@@ -43,7 +42,7 @@ class HookingScene: GameSceneBase {
         HookGryro = gyro//using HookGryro.X
         switch self.state{
             case .waiting:
-                if(waitend == 0){
+                if(waitend != true){
                     self.waittimer()
                 }
                 break
@@ -84,7 +83,7 @@ class HookingScene: GameSceneBase {
         }
     }
     func waittimer(){
-        waitend = 50000
+        waitend = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
             //Vizualizerにウキをどのくらい沈めたいかを通知
             
