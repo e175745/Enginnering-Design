@@ -16,19 +16,20 @@ class HookingScene: GameSceneBase {
     var accZ:Float = 0
     var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
-    //var Fishrarity = Int.random(in: 0 ... 10)//魚のレア度をランダムに決定
+    var Fishrarity = Int.random(in: 0 ... 10)//魚のレア度をランダムに決定
     var calval:Float = 0
     var sendval:Int = 0
     
     enum State {//処理のグループ分け
         case waiting
         case hooking
+        case hookingend
     }
     
     var state = State.waiting
     
     override func nextScene() -> GameScene? {
-        if state == .hooking {
+        if state == .hookingend {
             return ResultSceneDummy(base: self)//ここをFightにしてあげる
         }else {
             return nil
@@ -69,33 +70,37 @@ class HookingScene: GameSceneBase {
                     print("Hookingクラスのseccountが正しい動作をしていません")
                     break
             }
+        case .hookingend:
+            break
         }
     }
     func waittimer(){
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
             //Vizualizerにウキをどのくらい沈めたいかを通知
+            
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
-            /*
             self.Fishrarity = Int(self.WaitTime)*self.Fishrarity//0~100段階評価
             self.Fishrarity /= 10
             switch self.Fishrarity{
-                case 0..<4:
-                    print("レア度\(self.Fishrarity)の魚がhit!")
-                    break
-                case 4..<8:
-                    print("レア度\(self.Fishrarity)の魚がhit!!")
-                    break
-                case 8..<11:
-                    print("レア度\(self.Fishrarity)の魚がhit!!!")
-                    break
+            case 0..<4:
+                print("レア度\(self.Fishrarity)の魚がhit!")
+                break
+            case 4..<8:
+                print("レア度\(self.Fishrarity)の魚がhit!!")
+                break
+            case 8..<10:
+                print("激アツ!!レア度\(self.Fishrarity)の魚がhit!!!")
+                break
+            case 10:
+                print("大物の予感！？")
+                break
             default:
                 print("逃げられた...")
                 //初期画面に戻す処理
                 break
             }
-            */
             self.state = State.hooking//hookingに移行する
         }
     }
@@ -125,12 +130,13 @@ class HookingScene: GameSceneBase {
                     sendval = 0
                     break
             }
-            //Gamestatusに値を引き渡す。(classの処理が全て終了)
-            return gameStatus.HitCondition = sendval
+        //Gamestatusに値を引き渡す。(classの処理が全て終了)
+        gameStatus.HitCondition = sendval
+        state = State.hookingend
     }
     
     override func touched() {//？
-        state = .hooking
+        //state = .hooking
     }
     
     override func name() -> String {//？
