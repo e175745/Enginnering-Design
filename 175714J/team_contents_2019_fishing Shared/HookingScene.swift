@@ -3,7 +3,7 @@
 //  team_contents_2019_fishing
 //
 //  Created by Yuhei Akamine on 2019/12/14.
-//  Copyright © 2019 赤嶺有平. All rights reserved.
+//  Copyright © 2019 仲西智章. All rights reserved.
 //
 
 import Foundation
@@ -16,6 +16,7 @@ class HookingScene: GameSceneBase {
     var accZ:Float = 0
     var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
+    //var Fishrarity = Int.random(in: 0 ... 10)//魚のレア度をランダムに決定
     var calval:Float = 0
     var sendval:Int = 0
     
@@ -77,7 +78,23 @@ class HookingScene: GameSceneBase {
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
             /*
-            FishType = [0 ... 10]//10種類の魚
+            self.Fishrarity = Int(self.WaitTime)*self.Fishrarity//0~100段階評価
+            self.Fishrarity /= 10
+            switch self.Fishrarity{
+                case 0..<4:
+                    print("レア度\(self.Fishrarity)の魚がhit!")
+                    break
+                case 4..<8:
+                    print("レア度\(self.Fishrarity)の魚がhit!!")
+                    break
+                case 8..<11:
+                    print("レア度\(self.Fishrarity)の魚がhit!!!")
+                    break
+            default:
+                print("逃げられた...")
+                //初期画面に戻す処理
+                break
+            }
             */
             self.state = State.hooking//hookingに移行する
         }
@@ -131,3 +148,4 @@ class ResultSceneDummy: GameSceneBase {//Fightクラスに移行するように�
         return "result scene"
     }
 }
+
