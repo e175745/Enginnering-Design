@@ -49,30 +49,30 @@ class HookingScene: GameSceneBase {
                 break
             case .hooking:
 //画面上の動き(acc.z)が上向き(-Z方向),画面の回転(gyro.x)が手前側(+X方向)の時に値を取得する。
-                if(seccount < 30){//intervalseconds(1F)*15 = 0.5秒
+                if(seccount < 15){//intervalseconds(1F)*15 = 0.5秒
                     if (HookGryro.x >= 0 && HookAcc.z <= 0){
                         gyroX += HookGryro.x
                         accZ += HookAcc.z
                         seccount += 1
-                        print("+++++++ gyroX=\(gyroX) +++++++")
-                        print("+++++++ accZ=\(accZ) +++++++")
+//                        print("+++++++ gyroX=\(gyroX) +++++++")
+//                        print("+++++++ accZ=\(accZ) +++++++")
                     } else if (HookGryro.x < 0 && HookAcc.z <= 0){
                         //accZのみが正しい値の場合
                         accZ += HookAcc.z
                         seccount += 1
-                        print("+++++++ accZ=\(accZ) +++++++")
+//                        print("+++++++ accZ=\(accZ) +++++++")
                     } else if (HookGryro.x >= 0 && HookAcc.z > 0){
                         //gyroXが正しい値の場合
                         gyroX += HookGryro.x
                         seccount += 1
-                        print("+++++++ gyroX=\(gyroX) +++++++")
+//                        print("+++++++ gyroX=\(gyroX) +++++++")
                     } else {
                         //逆方向の判定が入った場合はカウンタの半分の値のみ追加する。
                         //(動かしていない場合、処理が終わらないことを防ぐ為)
                         seccount += 0.5
-                        print("+++++++++++ miss +++++++++++")
+//                        print("+++++++++++ miss +++++++++++")
                     }
-                }else if (seccount >= 30){//終了時(0.5秒後)にHookingresultを呼び出す
+                }else if (seccount >= 15){//終了時(0.5秒後)にHookingresultを呼び出す
                     self.Hookingresult()
                     break
                 }else{
@@ -91,18 +91,18 @@ class HookingScene: GameSceneBase {
             //低音を流して振動で掛かったことを伝える。
             print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
-            print("WaitTime=\(self.WaitTime),Fishrarity=\(self.Fishrarity)")
+//            print("WaitTime=\(self.WaitTime),Fishrarity=\(self.Fishrarity)")
             self.Fishrarity = Int(self.WaitTime) * self.Fishrarity//0~100段階評価
             self.Fishrarity /= 10
             switch self.Fishrarity{
-            case 0..<4:
-                print("レア度\(self.Fishrarity)の魚がhit!")
+            case 0..<1:
+                print("hit?")
                 break
-            case 4..<8:
-                print("レア度\(self.Fishrarity)の魚がhit!!")
+            case 1..<5:
+                print("hit!")
                 break
-            case 8..<10:
-                print("激アツ!!レア度\(self.Fishrarity)の魚がhit!!!")
+            case 5..<10:
+                print("激アツ!!!")
                 break
             case 10:
                 print("大物の予感！？")
@@ -142,7 +142,7 @@ class HookingScene: GameSceneBase {
                     break
             }
         gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
-        print(sendval)
+//        print(sendval)
         state = State.hookingend//sceneの切り替え
     }
     
