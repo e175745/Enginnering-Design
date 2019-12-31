@@ -26,7 +26,7 @@ class CastingScene: GameSceneBase {
         .sceneCompleted:"scene completed"
     ]
     let DISTACE_FLOAT_HOLD = SCNFloat(0.1)
-    let THROWING_VELO = SCNFloat(5)
+    var THROWING_VELO = SCNFloat(0)
     let GRAVITY = SCNVector3(0,-0.98,0)
     
     override func prepare() {
@@ -34,6 +34,7 @@ class CastingScene: GameSceneBase {
     }
     
     override func update(acc:SCNVector3,gyro:SCNVector3) {
+        self.THROWING_VELO=SCNFloat(acc.z)
         switch state {
         case .preparing:
             preparing()
@@ -89,4 +90,5 @@ class CastingScene: GameSceneBase {
             return nil
         }
     }
+
 }

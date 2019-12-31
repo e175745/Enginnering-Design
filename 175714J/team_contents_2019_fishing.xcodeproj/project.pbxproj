@@ -307,12 +307,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8XMJ7QJQN;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.fishing-ar-1224";
+				PRODUCT_BUNDLE_IDENTIFIER = "fishing-ar1231";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -327,12 +327,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8XMJ7QJQN;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.fishing-ar-1224";
+				PRODUCT_BUNDLE_IDENTIFIER = "fishing-ar1231";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -457,14 +457,14 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = R8XMJ7QJQN;
+				DEVELOPMENT_TEAM = CK3TXMV3XX;
 				INFOPLIST_FILE = "team_contents_2019_fishing macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fishing-tomo";
+				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -479,14 +479,14 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = R8XMJ7QJQN;
+				DEVELOPMENT_TEAM = CK3TXMV3XX;
 				INFOPLIST_FILE = "team_contents_2019_fishing macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fishing-tomo";
+				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;

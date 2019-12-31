@@ -33,30 +33,22 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     let status: GameStatus
     var scene: GameScene? //これは集約
     
+    var acc=SCNVector3(0,0,0)
+    var gyro=SCNVector3(0,0,0)
+    var plane=SCNVector3(0,0,0)
     let timerInterval = 0.033
-    var ACC = SCNVector3(0,0,0)
-    var GYRO = SCNVector3(0,0,0)
-    
-    func Acceleration(acc:SCNVector3){
-        self.ACC = acc
-    }
-    func rotationRate(gyro:SCNVector3){
-        self.GYRO = gyro
-    }
+    let testnode=SCNNode()
 
     init(sceneRenderer renderer: SCNSceneRenderer, view: View) {
         sceneRenderer = renderer
         self.view = view
-        
-        visualizer = FishingVisualizer()
-        sceneRenderer.scene = visualizer.scene
+        visualizer = FishingVisualizer(arScene:sceneRenderer.scene!)
         status = GameStatus()
         
         let skscene = SKScene(size: CGSize(width: view.frame.width, height: view.frame.height))
         skscene.isUserInteractionEnabled = false
         renderer.overlaySKScene = skscene
         visualizer.overlay = skscene
-        
         super.init()
         
         prepareScene()
@@ -65,6 +57,18 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) {[weak self] _ in
             self?.onTimer()
         }
+    }
+    
+    func plane_pos(pos:SCNVector3){
+        self.plane = pos
+    }
+    
+    func setAcc(acc:SCNVector3){
+        self.acc = acc
+    }
+    
+    func setGyro(gyro:SCNVector3){
+        self.gyro = gyro
     }
     
     func retry() {
@@ -83,8 +87,9 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     func onTimer() {
         let center = SCNVector3(view.frame.width/2, view.frame.height/2, 0)
         let optical_axis = SCNVector3(view.frame.width/2, view.frame.height/2, 1)
-
-        pointOfView = sceneRenderer.unprojectPoint(center)
+        
+        guard let base = sceneRenderer.scene?.rootNode.childNode(withName: "base", recursively: true) else {return}
+        pointOfView = sceneRenderer.unprojectPoint(center)-base.position
         directionOfView = (sceneRenderer.unprojectPoint(optical_axis)-pointOfView!).normalized
         
         visualizer.update(deltaTime: timerInterval)
@@ -93,8 +98,9 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         status.viewVector = directionOfView!
         
         if let scene = self.scene {
-            scene.update(acc: self.ACC,gyro: self.GYRO)
+            scene.update(acc:self.acc,gyro:self.gyro)
             visualizer.showText(name: "state", text: scene.name(), at: CGPoint(x:0,y:30))
+            
             if let nextScene = scene.nextScene() {
                 self.scene = nextScene
             }
@@ -111,7 +117,6 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         node!.position = pointOfView! + directionOfView!*10
         
         #endif
-        
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {

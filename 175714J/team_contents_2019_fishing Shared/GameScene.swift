@@ -8,12 +8,12 @@
 
 import Foundation
 import SceneKit
-import CoreMotion
 
 class GameStatus {
     var eyePoint = SCNVector3()   //視点（カメラの位置)
     var viewVector = SCNVector3() //視線ベクトル（カメラの向き）
-    var HitCondition = 0
+    var HitCondition:Int = 0
+    var FishRarity:Int = 0
     var result = "small fish"
 }
 
@@ -51,7 +51,6 @@ class GameSceneBase: GameScene {
     }
     
     func update(acc:SCNVector3,gyro:SCNVector3) {
-        
     }
     
     func name() -> String {
