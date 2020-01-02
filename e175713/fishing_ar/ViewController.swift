@@ -16,7 +16,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     
     var gameController : GameController!
-    
+    let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "AR Resources", bundle: Bundle.main)
     let motionManager = CMMotionManager()
 
     override func viewDidLoad() {
@@ -26,17 +26,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.delegate = self
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
-
-        self.gameController = GameController(sceneRenderer: sceneView)
-                
-
+        self.gameController = GameController(sceneRenderer: self.sceneView, view: self.sceneView)
         // Create a new scene
         //let scene = SCNScene(named: "Art.scnassets/ship.scn")!
         
         // Set the scene to the view
         //sceneView.scene = scene
-        
-        startSensorUpdates(intervalSeconds: 0.1)
 
         sceneView.debugOptions = [.showFeaturePoints]
         
@@ -44,7 +39,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //
+        gameController.touchBegin()
+        startSensorUpdates(intervalSeconds: 0.1)
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        gameController.touchEnd()
+        motionManager.stopAccelerometerUpdates()
     }
     
     // モーションデータの取得を開始
@@ -63,8 +64,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .horizontal
+        let configuration = ARImageTrackingConfiguration()
+        configuration.trackingImages = referenceImages!
 
         // Run the view's session
         sceneView.session.run(configuration)
@@ -82,18 +83,54 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     // Override to create and configure nodes for anchors added to the view's session.
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        let geom = SCNPlane(width: 0.3, height: 0.3)
-        let plane = SCNNode(geometry: geom)
-        plane.eulerAngles.x = -.pi/2
-             
-        node.addChildNode(plane)
-    }
+        print("aaaaaaaaaaaaaaaa")
+        if let imageAnchor = anchor as? ARImageAnchor{
+        // 平面ジオメトリを作成
+        let geometry = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
+        geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
 
+        // 平面ジオメトリを持つノードを作成
+        let planeNode = SCNNode(geometry: geometry)
+            planeNode.name="plane"
+            //x-z平面に合わせる
+        //planeNode.eulerAngles.x = -Float.pi/2
+        //planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
+            
+            let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
+
+        DispatchQueue.main.async(execute: {
+            //self.gameController.visualizer.scene.rootNode.addChildNode(planeNode)
+            // add planeNode to base
+            // set baseNode position
+            
+            if let base = self.gameController.visualizer.scene.rootNode.childNode(withName: "base", recursively: true){
+                base.position=position
+                base.addChildNode(planeNode)
+            }
+ 
+            //node.addChildNode(planeNode)
+            //self.gameController = GameController(sceneRenderer: self.sceneView, view: self.sceneView,planeNode: planeNode)
+        })
+    }
+    }
     
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor){
+        if anchor is ARImageAnchor{
+        let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
+        self.gameController.plane_pos(pos:position)
+        if let base = self.gameController.visualizer.scene.rootNode.childNode(withName: "base", recursively: true){
+            if base.childNode(withName: "plane", recursively: true) != nil{
+            base.position=position
+            }
+        }
+        }
+    }
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
     }
+    
+    
     
     func sessionWasInterrupted(_ session: ARSession) {
         // Inform the user that the session has been interrupted, for example, by presenting an overlay
@@ -107,17 +144,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // モーションデータの取得（例としてコンソールへ出力）
     func getMotionData(deviceMotion:CMDeviceMotion) {
-        print("attitudeX:", deviceMotion.attitude.pitch)
-        print("attitudeY:", deviceMotion.attitude.roll)
-        print("attitudeZ:", deviceMotion.attitude.yaw)
-        print("gyroX:", deviceMotion.rotationRate.x)
-        print("gyroY:", deviceMotion.rotationRate.y)
-        print("gyroZ:", deviceMotion.rotationRate.z)
-        print("gravityX:", deviceMotion.gravity.x)
-        print("gravityY:", deviceMotion.gravity.y)
-        print("gravityZ:", deviceMotion.gravity.z)
-        print("accX:", deviceMotion.userAcceleration.x)
-        print("accY:", deviceMotion.userAcceleration.y)
-        print("accZ:", deviceMotion.userAcceleration.z)
+        //GameController のインスタンスに渡す.
+        let ACC = SCNVector3(deviceMotion.userAcceleration.x,deviceMotion.userAcceleration.y,deviceMotion.userAcceleration.z)
+        
+        let GYRO = SCNVector3(deviceMotion.rotationRate.x,deviceMotion.rotationRate.y,deviceMotion.rotationRate.z)
+        
+        gameController.setGyro(gyro:GYRO)
+        gameController.setAcc(acc:ACC)
     }
 }

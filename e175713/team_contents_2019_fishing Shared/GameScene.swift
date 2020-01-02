@@ -12,7 +12,8 @@ import SceneKit
 class GameStatus {
     var eyePoint = SCNVector3()   //視点（カメラの位置)
     var viewVector = SCNVector3() //視線ベクトル（カメラの向き）
-    
+    var HitCondition:Int = 0
+    var FishRarity:Int = 0
     var result = "small fish"
 }
 
@@ -21,8 +22,7 @@ protocol GameScene {
     func released()
     
     func prepare()
-    func update()
-    
+    func update(acc:SCNVector3,gyro:SCNVector3)
     func name() -> String
     func nextScene() -> GameScene?
 }
@@ -50,7 +50,7 @@ class GameSceneBase: GameScene {
     func prepare() {
     }
     
-    func update() {
+    func update(acc:SCNVector3,gyro:SCNVector3) {
     }
     
     func name() -> String {

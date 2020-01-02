@@ -33,7 +33,8 @@
 		04AFC5DD239775580027C5D3 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AFC5B9239775560027C5D3 /* GameController.swift */; };
 		04AFC5DF239775580027C5D3 /* Art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04AFC5BA239775560027C5D3 /* Art.scnassets */; };
 		04AFC5E1239775580027C5D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04AFC5BB239775580027C5D3 /* Assets.xcassets */; };
-		669ED61323AE7120003A444D /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 669ED61223AE7120003A444D /* FightingScene.swift */; };
+		665C6E5C23BCF00E009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5B23BCF00E009898DD /* FightingScene.swift */; };
+		665C6E5D23BD036D009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5B23BCF00E009898DD /* FightingScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,7 +60,7 @@
 		04AFC5D6239775580027C5D3 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		04AFC5D9239775580027C5D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		04AFC5DB239775580027C5D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		669ED61223AE7120003A444D /* FightingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FightingScene.swift; sourceTree = "<group>"; };
+		665C6E5B23BCF00E009898DD /* FightingScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FightingScene.swift; path = "../../akamine/2019_team_ar_fishing/team_contents_2019_fishing Shared/FightingScene.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,10 +113,10 @@
 				044A1E2F239A348200B295BB /* GameScene.swift */,
 				040CBB3A23A515F300D79AD6 /* CastingScene.swift */,
 				040CBB3D23A5257600D79AD6 /* HookingScene.swift */,
+				665C6E5B23BCF00E009898DD /* FightingScene.swift */,
 				044A1E32239A349700B295BB /* CastScene.swift */,
 				04AFC5BA239775560027C5D3 /* Art.scnassets */,
 				04AFC5BB239775580027C5D3 /* Assets.xcassets */,
-				669ED61223AE7120003A444D /* FightingScene.swift */,
 			);
 			path = "team_contents_2019_fishing Shared";
 			sourceTree = "<group>";
@@ -252,6 +253,7 @@
 				040CBB3C23A515F300D79AD6 /* CastingScene.swift in Sources */,
 				044A1E152398EFBE00B295BB /* GameController.swift in Sources */,
 				044A1E31239A348200B295BB /* GameScene.swift in Sources */,
+				665C6E5D23BD036D009898DD /* FightingScene.swift in Sources */,
 				044A1E042398E7C000B295BB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -263,7 +265,7 @@
 				040CBB3E23A5257600D79AD6 /* HookingScene.swift in Sources */,
 				040CBB3823A4AB9600D79AD6 /* Visualizer.swift in Sources */,
 				040CBB3523A483E700D79AD6 /* SCNMathExtensions.swift in Sources */,
-				669ED61323AE7120003A444D /* FightingScene.swift in Sources */,
+				665C6E5C23BCF00E009898DD /* FightingScene.swift in Sources */,
 				04AFC5D7239775580027C5D3 /* GameViewController.swift in Sources */,
 				044A1E33239A349700B295BB /* CastScene.swift in Sources */,
 				040CBB4323A52C1300D79AD6 /* ResultViewController.swift in Sources */,
@@ -309,14 +311,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S3UNBN5SS6;
+				DEVELOPMENT_TEAM = 932XBB3A8K;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.fishing-ar";
+				PRODUCT_BUNDLE_IDENTIFIER = "Fishing-Demo2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -329,14 +331,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S3UNBN5SS6;
+				DEVELOPMENT_TEAM = 932XBB3A8K;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.fishing-ar";
+				PRODUCT_BUNDLE_IDENTIFIER = "Fishing-Demo2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -469,7 +471,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fishing";
+				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -492,7 +494,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fishing";
+				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
