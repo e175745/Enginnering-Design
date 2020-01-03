@@ -67,6 +67,44 @@
             </objects>
             <point key="canvasLocation" x="848" y="197"/>
         </scene>
+        <!--Model View-->
+        <scene sceneID="2qm-A0-uBb">
+            <objects>
+                <viewController id="wmD-rL-LjN" customClass="ModelView" customModule="Fishing_Demo" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uRN-vL-cvr">
+                        <rect key="frame" x="0.0" y="0.0" width="712" height="1006.9200564096436"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7CJ-ct-rfg">
+                                <rect key="frame" x="0.0" y="0.0" width="712" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Title" id="JRo-h2-rwe">
+                                        <barButtonItem key="leftBarButtonItem" title="Back" id="kuj-xw-d86">
+                                            <connections>
+                                                <segue destination="Doa-vU-Hgv" kind="show" id="R65-ns-Bda"/>
+                                            </connections>
+                                        </barButtonItem>
+                                    </navigationItem>
+                                </items>
+                            </navigationBar>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yfs-NE-UBC">
+                                <rect key="frame" x="45" y="239" width="623" height="528"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </sceneKitView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="IXh-Wp-80w"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="FoC-he-Qpw"/>
+                    <connections>
+                        <outlet property="sceneView" destination="Yfs-NE-UBC" id="E70-qx-zg9"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wca-eP-zCA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="813.66906474820155" y="1050.7537688442212"/>
+        </scene>
         <!--Main-->
         <scene sceneID="qFh-0a-VNO">
             <objects>
@@ -103,6 +141,14 @@
                                     <action selector="SetImage:" destination="Doa-vU-Hgv" eventType="touchUpInside" id="9G3-je-qW9"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nbL-aR-RYM">
+                                <rect key="frame" x="534" y="834" width="108" height="67"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Show 3D Model"/>
+                                <connections>
+                                    <segue destination="wmD-rL-LjN" kind="show" id="oSx-nh-wQr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="WAo-zp-VOq"/>
@@ -121,6 +167,6 @@
         <image name="Start" width="375" height="156"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="w1O-fP-CTb"/>
+        <segue reference="R65-ns-Bda"/>
     </inferredMetricsTieBreakers>
 </document>
