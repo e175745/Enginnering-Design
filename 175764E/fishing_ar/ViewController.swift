@@ -45,7 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         gameController.touchEnd()
-        gameController.status.holding=false
+        gameController.status.isHolding=false
         motionManager.stopAccelerometerUpdates()
     }
     
@@ -84,7 +84,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     // Override to create and configure nodes for anchors added to the view's session.
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        print("aaaaaaaaaaaaaaaa")
         if let imageAnchor = anchor as? ARImageAnchor{
         // 平面ジオメトリを作成
         let geometry = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
@@ -94,7 +93,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let planeNode = SCNNode(geometry: geometry)
             planeNode.name="plane"
             //x-z平面に合わせる
-        //planeNode.eulerAngles.x = -Float.pi/2
+        planeNode.eulerAngles.x = -Float.pi/2
         //planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
             
             let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
@@ -118,8 +117,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor){
         if anchor is ARImageAnchor{
         let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
+        self.gameController.plane_pos(pos:position)
         if let base = self.gameController.visualizer.scene.rootNode.childNode(withName: "base", recursively: true){
-            if let plane = base.childNode(withName: "plane", recursively: true){
+            if base.childNode(withName: "plane", recursively: true) != nil{
             base.position=position
             }
         }

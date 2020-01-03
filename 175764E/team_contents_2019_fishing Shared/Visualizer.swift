@@ -70,8 +70,6 @@ class Visualizer
         return ob
     }
     
-    
-    
     func showText(name:String, text:String, at:CGPoint) {
         if let overlay = self.overlay {
             var pos = at
@@ -79,7 +77,7 @@ class Visualizer
             pos.y = overlay.frame.height - pos.y
             #endif
             
-            var node = texts[name]
+            let node = texts[name]
             if node == nil {
                 let n = SKLabelNode()
                 n.horizontalAlignmentMode = .left
@@ -114,13 +112,19 @@ class FishingVisualizer : Visualizer
     }
     
     private func makeFloatVisual() {
+        /*
         let dummyFloat = SCNNode(geometry: SCNSphere(radius: 0.01))
         dummyFloat.geometry?.firstMaterial?.diffuse.contents = SCNColor.red
-        floatObject = makeObject(with: dummyFloat)
+        */
+        let floatScene = SCNScene(named: "Float_2.scn", inDirectory: "Art.scnassets")
+        if let dummyFloat = floatScene?.rootNode.childNode(withName: "Float", recursively: true){
+            dummyFloat.scale = SCNVector3(0.01, 0.01, 0.01)
+            floatObject = makeObject(with: dummyFloat)
+        }
     }
     
     func makeLine(status:GameStatus){
-        if !status.holding{
+        if !status.isHolding{
         if let base=scene.rootNode.childNode(withName: "base", recursively: true){
         if let float=floatObject{
             let from = SCNVector3(status.eyePoint.x+status.viewVector.x*0.1,status.eyePoint.y+status.viewVector.y*0.1+0.4,status.eyePoint.z+status.viewVector.z*0.1)
@@ -141,9 +145,20 @@ class FishingVisualizer : Visualizer
     }
     }
     }
+    
     func moveFloat(to: SCNVector3) {
         floatObject!.position = to
         //print(floatObject!.position)
     }
     
+    // Fight専用
+    func updateVelocity(to position: SCNVector3){
+        floatObject!.velocity = (position-floatObject!.position)
+        
+    }
+    
+    func playSound(_ soundID:UInt32){
+        AudioServicesPlaySystemSoundWithCompletion(soundID) {}
+    }
 }
+
