@@ -9,6 +9,7 @@
 import Foundation
 import SceneKit
 import SpriteKit
+import ARKit
 
 class MovingObject
 {
@@ -18,7 +19,6 @@ class MovingObject
         set(p) { node.position = p }
     }
     var velocity: SCNVector3 = SCNVector3()
-    
     var gravity: SCNVector3 = SCNVector3()
     
     init(node: SCNNode) {
@@ -46,6 +46,9 @@ class Visualizer
     init() {
         
     }
+    init(arScene: SCNScene){
+        
+    }
     
     func update(deltaTime:Double) {
         for ob in objects {
@@ -56,7 +59,14 @@ class Visualizer
     func makeObject(with node: SCNNode) -> MovingObject {
         let ob = MovingObject(node:node)
         objects.append(ob)
-        scene.rootNode.addChildNode(node)
+        //planeNode.addChildNode(node)
+        //scene.rootNode.addChildNode(node)
+        if let base = scene.rootNode.childNode(withName: "base", recursively: true){
+            
+            base.addChildNode(node)
+            //ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
+            //ship.removeFromParentNode()
+        }
         return ob
     }
     
@@ -87,36 +97,36 @@ class FishingVisualizer : Visualizer
     var floatObject: MovingObject?
     let GRAVITY = SCNVector3(0,-0.98,0)
     
-    override init() {
+    override init(arScene:SCNScene) {
         super.init()
-        prepareScene()
+        prepareScene(arScene: arScene)
     }
     
-    private func prepareScene() {
-        scene = SCNScene(named: "Art.scnassets/ship.scn")!
+    private func prepareScene(arScene:SCNScene) {
+        scene = arScene//SCNScene(named: "Art.scnassets/ship.scn")!
         
-        if scene.rootNode.childNode(withName: "ship", recursively: true) != nil {
-            //ship.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
-            //ship.removeFromParentNode()
-        }
-        
+        let base = SCNNode()
+        base.name="base"
+        scene.rootNode.addChildNode(base)
         makeFloatVisual()
     }
     
     private func makeFloatVisual() {
-        let dummyFloat = SCNNode(geometry: SCNSphere(radius: 2.0))
+        let dummyFloat = SCNNode(geometry: SCNSphere(radius: 0.01))
         dummyFloat.geometry?.firstMaterial?.diffuse.contents = SCNColor.red
         floatObject = makeObject(with: dummyFloat)
     }
     
     func moveFloat(to: SCNVector3) {
         floatObject!.position = to
+        //print(floatObject!.position)
     }
     
+    // Fight専用
     func updateVelocity(to position: SCNVector3){
         floatObject!.velocity = (position-floatObject!.position)
         
     }
     
-    
 }
+

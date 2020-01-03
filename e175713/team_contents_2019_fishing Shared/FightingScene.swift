@@ -10,23 +10,22 @@ import Foundation
 import SceneKit
 
 class FightingScene: GameSceneBase {
-    
+
     enum State {
         case fighting
-        case touched
         case successful
         case failed
     }
-    
+
     var state: State = .fighting
+    
     let stateDesc: [State:String] = [
         .fighting:"fighting",
-        .touched:"touched",
         .successful:"successful",
         .failed:"failed"
     ]
-    
-    override func update() {
+
+    override func update(acc:SCNVector3,gyro:SCNVector3) {
         switch state {
         case .fighting:
             fighting()
@@ -34,56 +33,48 @@ class FightingScene: GameSceneBase {
             break
         }
     }
-    
-    let THROWING_VELO = SCNFloat(5)
-    
+
+    //stateがfightingの間、常に呼び出される関数
     private func fighting() {
-        //ここに魚の暴れ具合を実装予定
-        //visualizer.floatObject!.velocity = -gameStatus.viewVector
+        //ここに魚の暴れ具合を実装
+        let randomX = Double.random(in: -0.02..<0.02)
+        let randomZ = Double.random(in: 0..<0.02)
+        let minusPow = SCNVector3(randomX,0,randomZ)
+        visualizer.floatObject!.velocity = visualizer.floatObject!.velocity - minusPow
     }
-    
+
+    //画面にタッチしたときの呼び出される関数
     override func touched() {
-        state = .touched
-        
-        let dx = -(visualizer.floatObject!.position.x - gameStatus.eyePoint.x)
-        let dy = -(visualizer.floatObject!.position.y - gameStatus.eyePoint.y)
-        let dz = -(visualizer.floatObject!.position.z - gameStatus.eyePoint.z)
+        //オブジェクトとカメラの距離を求める材料
+        let dx = visualizer.floatObject!.position.x - gameStatus.eyePoint.x
+        let dy = visualizer.floatObject!.position.y - gameStatus.eyePoint.y
+        let dz = visualizer.floatObject!.position.z - gameStatus.eyePoint.z
+        //2点間距離(2次元)
         let distance = sqrtf(Float(dx*dx+dz*dz))
-        let move_x = Float(dx / 10 )
-        let move_z = Float(dz / 10 )
-        let fightMove = SCNVector3(move_x,0,move_z)
-        let finishMove = SCNVector3(dx,dy,dx-2.0)
-        
-        let newPosFight = visualizer.floatObject!.position + fightMove
-        
-        let newPosFinish = visualizer.floatObject!.position + finishMove
-        
+        //実際に移動するときに渡すベクトル
+        //Fight中
+        let newPosFight = visualizer.floatObject!.position - SCNVector3(dx/2,0,dz/2)
+        //成功したとき
+        let newPosFinish = visualizer.floatObject!.position - SCNVector3(dx,dy*2,dz)
         // 指定距離に入ったらFighting終了それ以外は続行
-        if distance < 10{
+        if distance < 0.1{
+            print("End")
             state = .successful
-            return visualizer.moveFloat(to: newPosFinish)
-            //visualizer.floatObject!.velocity = newPosFinish
+            visualizer.floatObject!.velocity = SCNVector3()
+            return visualizer.updateVelocity(to: newPosFinish)
         }else{
-            state = .fighting
-            if visualizer.floatObject!.position.x > newPosFight.x || visualizer.floatObject!.position.z > newPosFight.z{
-                visualizer.floatObject!.velocity = SCNVector3()
-            }else{
-                return visualizer.updateVelocity(to: newPosFight)
-                //visualizer.floatObject!.velocity = newPosFight
-            }
+            print("Push!")
+            return visualizer.updateVelocity(to: newPosFight)
         }
-        
     }
-    
     //時間制限を実装する関数
     private func timeLimit(){
-        
     }
-    
+
     override func name() -> String {
         return "Fighting("+stateDesc[state]!+")"
     }
-    
+
     override func nextScene() -> GameScene? {
         if state == .successful {
             return nil
@@ -93,5 +84,6 @@ class FightingScene: GameSceneBase {
             return nil
         }
     }
-    
 }
+
+
