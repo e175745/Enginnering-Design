@@ -21,7 +21,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -120,7 +119,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)
         self.gameController.plane_pos(pos:position)
         if let base = self.gameController.visualizer.scene.rootNode.childNode(withName: "base", recursively: true){
-            if let plane = base.childNode(withName: "plane", recursively: true){
+            if base.childNode(withName: "plane", recursively: true) != nil{
             base.position=position
             }
         }

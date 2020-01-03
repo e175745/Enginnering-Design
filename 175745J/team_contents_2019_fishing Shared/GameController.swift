@@ -98,7 +98,7 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         status.viewVector = directionOfView!
         
         if let scene = self.scene {
-            scene.update(acc:self.acc,gyro:self.plane)
+            scene.update(acc:self.acc,gyro:self.gyro)
             visualizer.showText(name: "state", text: scene.name(), at: CGPoint(x:0,y:30))
             
             if let nextScene = scene.nextScene() {

@@ -9,6 +9,7 @@
 import Foundation
 import SceneKit
 import SpriteKit
+import ARKit
 
 class MovingObject
 {
@@ -76,7 +77,7 @@ class Visualizer
             pos.y = overlay.frame.height - pos.y
             #endif
             
-            var node = texts[name]
+            let node = texts[name]
             if node == nil {
                 let n = SKLabelNode()
                 n.horizontalAlignmentMode = .left
@@ -96,8 +97,6 @@ class FishingVisualizer : Visualizer
     var floatObject: MovingObject?
     let GRAVITY = SCNVector3(0,-0.98,0)
     
-    var status = GameStatus()
-    
     override init(arScene:SCNScene) {
         super.init()
         prepareScene(arScene: arScene)
@@ -113,9 +112,15 @@ class FishingVisualizer : Visualizer
     }
     
     private func makeFloatVisual() {
+        /*
         let dummyFloat = SCNNode(geometry: SCNSphere(radius: 0.01))
         dummyFloat.geometry?.firstMaterial?.diffuse.contents = SCNColor.red
-        floatObject = makeObject(with: dummyFloat)
+        */
+        let floatScene = SCNScene(named: "Float_2.scn", inDirectory: "Art.scnassets")
+        if let dummyFloat = floatScene?.rootNode.childNode(withName: "Float", recursively: true){
+            dummyFloat.scale = SCNVector3(0.01, 0.01, 0.01)
+            floatObject = makeObject(with: dummyFloat)
+        }
     }
     
     func moveFloat(to: SCNVector3) {
@@ -123,31 +128,14 @@ class FishingVisualizer : Visualizer
         //print(floatObject!.position)
     }
     
-    func makeLine(exe:Bool){
-        if exe{
-            if let float=floatObject{
-                let from = SCNVector3(status.eyePoint.x,status.eyePoint.y+0.4,status.eyePoint.z)
-                let to = float.position
-                if let oldLineObject = scene.rootNode.childNode(withName:"line",recursively: true){
-                    oldLineObject.removeFromParentNode()
-                    }
-                let source = SCNGeometrySource(vertices: [from, to])
-                let indices: [Int32] = [0, 1]
-                let element = SCNGeometryElement(indices: indices, primitiveType: .line)
-                let line = SCNGeometry(sources: [source], elements: [element])
-                line.firstMaterial?.lightingModel = SCNMaterial.LightingModel.blinn
-                let dummyLine = SCNNode(geometry: line)
-                dummyLine.geometry?.firstMaterial?.emission.contents = SCNColor.white
-                dummyLine.name="line"
-                scene.rootNode.addChildNode(dummyLine)
-            }
-        }
+    // Fight専用
+    func updateVelocity(to position: SCNVector3){
+        floatObject!.velocity = (position-floatObject!.position)
+        
     }
     
-    override func update(deltaTime:Double) {
-        for ob in objects {
-            ob.update(deltaTime:deltaTime)
-        }
-        makeLine(exe: true)
+    func playSound(_ soundID:UInt32){
+        AudioServicesPlaySystemSoundWithCompletion(soundID) {}
     }
 }
+

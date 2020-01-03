@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Spike-Goes-Bang-cowboy-bebop-33236205-1920-1080.jpg"
+      "filename" : "IMG_0752.PNG"
     }
   ],
   "info" : {
@@ -10,6 +10,7 @@
     "author" : "xcode"
   },
   "properties" : {
-    "width" : 10
+    "width" : 15,
+    "unit" : "centimeters"
   }
 }

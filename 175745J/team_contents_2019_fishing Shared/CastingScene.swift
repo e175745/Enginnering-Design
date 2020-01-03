@@ -76,10 +76,10 @@ class CastingScene: GameSceneBase {
     }
     
     override func released() {
+        visualizer.playSound(1001)
         if state == .holding {
             state = .throwing
             visualizer.floatObject!.velocity = gameStatus.viewVector * THROWING_VELO
-
         }
     }
     
