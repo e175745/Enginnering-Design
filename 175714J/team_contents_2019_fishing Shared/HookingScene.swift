@@ -27,15 +27,13 @@ class HookingScene: GameSceneBase {
         case hookingend
     }
     
-    var state = State.waiting
+    let stateDesc: [State:String] = [
+        .waiting:"waiting",
+        .hooking:"hooking",
+        .hookingend:"hookingend"
+    ]
     
-    override func nextScene() -> GameScene? {
-        if state == .hookingend {
-            return ResultSceneDummy(base: self)//ここをFightにしてあげる
-        }else {
-            return nil
-        }
-    }
+    var state = State.waiting
     
     override func update(acc:SCNVector3,gyro:SCNVector3){
         HookAcc = acc//using HookAcc.Z
@@ -82,12 +80,28 @@ class HookingScene: GameSceneBase {
             break
         }
     }
+    
+//    func Hitsound(_ sender : AnyObject) {
+//        if ( audioPlayer.isPlaying ){
+//            audioPlayer.stop()
+//            button.setTitle("Stop", for: UIControl.State())
+//        }
+//        else{
+//            audioPlayer.play()
+//            button.setTitle("Play", for: UIControl.State())
+//        }
+//    }
+    
     func waittimer(){
         waitend = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
             //Vizualizerにウキをどのくらい沈めたいかを通知
             
-            //低音を流して振動で掛かったことを伝える。
+            
+            
+            //音を流して振動で掛かったことを伝える。
+            self.visualizer.playSound(1001)
+            
 //            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
 //            print("WaitTime=\(self.WaitTime),Fishrarity=\(self.Fishrarity)")
@@ -151,20 +165,19 @@ class HookingScene: GameSceneBase {
         //state = .hooking
     }
     
-    override func name() -> String {//？
-        return "Hooking"
-    }
-}
-
-
-class ResultSceneDummy: GameSceneBase {//Fightクラスに移行するようにする？。
-    override func nextScene() -> GameScene? {
-        return nil
-    }
+//    override func name() -> String {//？
+//        return "Hooking"
+//    }
     
     override func name() -> String {
-        return "result scene"
+        return "Hooking("+stateDesc[state]!+")"
+    }
+    
+    override func nextScene() -> GameScene? {
+        if state == .hookingend {
+            return FightingScene(base: self)
+        }else {
+            return nil
+        }
     }
 }
-
-
