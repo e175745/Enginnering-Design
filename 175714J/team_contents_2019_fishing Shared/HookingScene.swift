@@ -189,7 +189,7 @@ class HookingScene: GameSceneBase {
             
         }else if(state == .hookingfalse){
             
-            return FightingScene(base: self)
+            return BackScene(base: self)
             
         }else{
             return nil
