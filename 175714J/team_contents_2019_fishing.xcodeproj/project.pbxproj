@@ -96,6 +96,7 @@
 			children = (
 				044A1E032398E7C000B295BB /* AppDelegate.swift */,
 				044A1E072398E7C000B295BB /* ViewController.swift */,
+				614F455623BFC7D400CC2235 /* Menu_BGM.mp3 */,
 				044A1E092398E7C000B295BB /* Main.storyboard */,
 				614F455423BFC65300CC2235 /* MainDIsplay.swift */,
 				044A1E0C2398E7C100B295BB /* Assets.xcassets */,
@@ -127,7 +128,6 @@
 				665C6E5E23BDB3C6009898DD /* FightingScene.swift */,
 				044A1E32239A349700B295BB /* CastScene.swift */,
 				614F455723BFC7D400CC2235 /* MGS_!.mp3 */,
-				614F455623BFC7D400CC2235 /* Menu_BGM.mp3 */,
 				614F455923BFC7D400CC2235 /* itemGet.wav */,
 				614F455823BFC7D400CC2235 /* !.mp3 */,
 				04AFC5BA239775560027C5D3 /* Art.scnassets */,

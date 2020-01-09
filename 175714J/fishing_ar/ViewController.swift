@@ -11,6 +11,7 @@ import SceneKit
 import ARKit
 import CoreMotion
 
+
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
@@ -18,6 +19,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var gameController : GameController!
     let referenceImages = ARReferenceImage.referenceImages(inGroupNamed: "AR Resources", bundle: Bundle.main)
     let motionManager = CMMotionManager()
+//    var audioPlayer: AVAudioPlayer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
