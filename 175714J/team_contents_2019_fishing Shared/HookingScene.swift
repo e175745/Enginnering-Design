@@ -8,8 +8,10 @@
 
 import Foundation
 import SceneKit
+import AVFoundation
 
 class HookingScene: GameSceneBase {
+    var audioPlayer: AVAudioPlayer!
     var HookAcc = SCNVector3(0,0,0)
     var HookGyro = SCNVector3(0,0,0)
     var gyroX:Float = 0
@@ -88,25 +90,14 @@ class HookingScene: GameSceneBase {
         }
     }
     
-//    func Hitsound(_ sender : AnyObject) {
-//        if ( audioPlayer.isPlaying ){
-//            audioPlayer.stop()
-//            button.setTitle("Stop", for: UIControl.State())
-//        }
-//        else{
-//            audioPlayer.play()
-//            button.setTitle("Play", for: UIControl.State())
-//        }
-//    }
-    
     func waittimer(){
         waitend = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
             //Vizualizerにウキをどのくらい沈めたいか
             self.visualizer.moveFloat(to: SCNVector3(self.visualizer.floatObject!.position.x,-0.1,self.visualizer.floatObject!.position.z))
             
-            //音を流して振動で掛かったことを伝える。
-            
+            // mp3音声(音声の名前.mp3)の再生。音を流して掛かったことを伝える。
+            self.visualizer.playSound(name: "MGS_!")
             
 //            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
@@ -179,7 +170,6 @@ class HookingScene: GameSceneBase {
             self.state = State.hookingend//sceneの切り替え
         }
     }
-    
     override func touched() {//？
         //state = .hooking
     }
@@ -194,6 +184,7 @@ class HookingScene: GameSceneBase {
     
     override func nextScene() -> GameScene? {
         if(state == .hookingend){
+            
             return FightingScene(base: self)
             
         }else if(state == .hookingfalse){

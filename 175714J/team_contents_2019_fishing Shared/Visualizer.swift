@@ -10,6 +10,7 @@ import Foundation
 import SceneKit
 import SpriteKit
 import ARKit
+import AVFoundation
 
 class MovingObject
 {
@@ -35,13 +36,13 @@ class MovingObject
     }
 }
 
-class Visualizer
-{
+class Visualizer{
     var scene = SCNScene()
     var overlay: SKScene?
     
     var objects: [MovingObject] = []
     var texts: [String:SKLabelNode] = [:]
+    var audioPlayer: AVAudioPlayer!
     
     init() {
         
@@ -77,7 +78,7 @@ class Visualizer
             pos.y = overlay.frame.height - pos.y
             #endif
             
-            var node = texts[name]
+            let node = texts[name]
             if node == nil {
                 let n = SKLabelNode()
                 n.horizontalAlignmentMode = .left
@@ -112,9 +113,38 @@ class FishingVisualizer : Visualizer
     }
     
     private func makeFloatVisual() {
+        /*
         let dummyFloat = SCNNode(geometry: SCNSphere(radius: 0.01))
         dummyFloat.geometry?.firstMaterial?.diffuse.contents = SCNColor.red
-        floatObject = makeObject(with: dummyFloat)
+        */
+        let floatScene = SCNScene(named: "Float_2.scn", inDirectory: "Art.scnassets")
+        if let dummyFloat = floatScene?.rootNode.childNode(withName: "Float", recursively: true){
+            dummyFloat.scale = SCNVector3(0.01, 0.01, 0.01)
+            floatObject = makeObject(with: dummyFloat)
+        }
+    }
+    
+    func makeLine(status:GameStatus){
+        if !status.isHolding{
+        if let base=scene.rootNode.childNode(withName: "base", recursively: true){
+        if let float=floatObject{
+            let from = SCNVector3(status.eyePoint.x+status.viewVector.x*0.1,status.eyePoint.y+status.viewVector.y*0.1+0.4,status.eyePoint.z+status.viewVector.z*0.1)
+            let to = float.position
+            if let oldLineObject = base.childNode(withName:"line",recursively: true){
+                oldLineObject.removeFromParentNode()
+                }
+            let source = SCNGeometrySource(vertices: [from, to])
+            let indices: [Int32] = [0, 1]
+            let element = SCNGeometryElement(indices: indices, primitiveType: .line)
+            let line = SCNGeometry(sources: [source], elements: [element])
+            line.firstMaterial?.lightingModel = SCNMaterial.LightingModel.blinn
+            let dummyLine = SCNNode(geometry: line)
+            dummyLine.geometry?.firstMaterial?.emission.contents = SCNColor.white
+            dummyLine.name="line"
+            base.addChildNode(dummyLine)
+        }
+    }
+    }
     }
     
     func moveFloat(to: SCNVector3) {
@@ -122,4 +152,29 @@ class FishingVisualizer : Visualizer
         //print(floatObject!.position)
     }
     
+    // Fight専用
+    func updateVelocity(to position: SCNVector3){
+        floatObject!.velocity = (position-floatObject!.position)
+        
+    }
+    
+    func playSound(name: String) {
+        guard let path = Bundle.main.path(forResource: name, ofType: "mp3") else {
+            print("音源ファイルが見つかりません")
+            return
+        }
+
+        do {
+            // AVAudioPlayerのインスタンス化
+            audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: path))
+
+            // AVAudioPlayerのデリゲートをセット
+            audioPlayer.delegate = self as? AVAudioPlayerDelegate
+
+            // 音声の再生
+            audioPlayer.play()
+        } catch {
+        }
+    }
 }
+

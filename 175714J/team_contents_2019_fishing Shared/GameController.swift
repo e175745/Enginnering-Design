@@ -21,7 +21,7 @@ import SpriteKit
     typealias View = UIView
 #endif
 
-class GameController: NSObject, SCNSceneRendererDelegate {
+class GameController: NSObject, SCNSceneRendererDelegate{
 
     unowned let view: View
     unowned let sceneRenderer: SCNSceneRenderer
@@ -93,6 +93,7 @@ class GameController: NSObject, SCNSceneRendererDelegate {
         directionOfView = (sceneRenderer.unprojectPoint(optical_axis)-pointOfView!).normalized
         
         visualizer.update(deltaTime: timerInterval)
+        visualizer.makeLine(status: self.status)
         
         status.eyePoint = pointOfView!
         status.viewVector = directionOfView!
@@ -130,4 +131,5 @@ class GameController: NSObject, SCNSceneRendererDelegate {
     func touchEnd() {
         scene?.released()
     }
+    
 }

@@ -33,6 +33,13 @@
 		04AFC5DD239775580027C5D3 /* GameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04AFC5B9239775560027C5D3 /* GameController.swift */; };
 		04AFC5DF239775580027C5D3 /* Art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04AFC5BA239775560027C5D3 /* Art.scnassets */; };
 		04AFC5E1239775580027C5D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04AFC5BB239775580027C5D3 /* Assets.xcassets */; };
+		614F455523BFC65300CC2235 /* MainDIsplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 614F455423BFC65300CC2235 /* MainDIsplay.swift */; };
+		614F455A23BFC7D400CC2235 /* Menu_BGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 614F455623BFC7D400CC2235 /* Menu_BGM.mp3 */; };
+		614F455B23BFC7D400CC2235 /* MGS_!.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 614F455723BFC7D400CC2235 /* MGS_!.mp3 */; };
+		614F455C23BFC7D400CC2235 /* !.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 614F455823BFC7D400CC2235 /* !.mp3 */; };
+		614F455D23BFC7D400CC2235 /* itemGet.wav in Resources */ = {isa = PBXBuildFile; fileRef = 614F455923BFC7D400CC2235 /* itemGet.wav */; };
+		665C6E5F23BDB3C6009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5E23BDB3C6009898DD /* FightingScene.swift */; };
+		665C6E6023BDB3C6009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5E23BDB3C6009898DD /* FightingScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +65,12 @@
 		04AFC5D6239775580027C5D3 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		04AFC5D9239775580027C5D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		04AFC5DB239775580027C5D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		614F455423BFC65300CC2235 /* MainDIsplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainDIsplay.swift; sourceTree = "<group>"; };
+		614F455623BFC7D400CC2235 /* Menu_BGM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Menu_BGM.mp3; sourceTree = "<group>"; };
+		614F455723BFC7D400CC2235 /* MGS_!.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "MGS_!.mp3"; sourceTree = "<group>"; };
+		614F455823BFC7D400CC2235 /* !.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "!.mp3"; sourceTree = "<group>"; };
+		614F455923BFC7D400CC2235 /* itemGet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = itemGet.wav; sourceTree = "<group>"; };
+		665C6E5E23BDB3C6009898DD /* FightingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FightingScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +97,7 @@
 				044A1E032398E7C000B295BB /* AppDelegate.swift */,
 				044A1E072398E7C000B295BB /* ViewController.swift */,
 				044A1E092398E7C000B295BB /* Main.storyboard */,
+				614F455423BFC65300CC2235 /* MainDIsplay.swift */,
 				044A1E0C2398E7C100B295BB /* Assets.xcassets */,
 				044A1E0E2398E7C100B295BB /* LaunchScreen.storyboard */,
 				044A1E112398E7C100B295BB /* Info.plist */,
@@ -110,7 +124,12 @@
 				044A1E2F239A348200B295BB /* GameScene.swift */,
 				040CBB3A23A515F300D79AD6 /* CastingScene.swift */,
 				040CBB3D23A5257600D79AD6 /* HookingScene.swift */,
+				665C6E5E23BDB3C6009898DD /* FightingScene.swift */,
 				044A1E32239A349700B295BB /* CastScene.swift */,
+				614F455723BFC7D400CC2235 /* MGS_!.mp3 */,
+				614F455623BFC7D400CC2235 /* Menu_BGM.mp3 */,
+				614F455923BFC7D400CC2235 /* itemGet.wav */,
+				614F455823BFC7D400CC2235 /* !.mp3 */,
 				04AFC5BA239775560027C5D3 /* Art.scnassets */,
 				04AFC5BB239775580027C5D3 /* Assets.xcassets */,
 			);
@@ -182,7 +201,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1120;
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "赤嶺有平";
 				TargetAttributes = {
 					044A1E002398E7C000B295BB = {
@@ -217,10 +236,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				614F455C23BFC7D400CC2235 /* !.mp3 in Resources */,
 				044A1E162398F04400B295BB /* Art.scnassets in Resources */,
+				614F455A23BFC7D400CC2235 /* Menu_BGM.mp3 in Resources */,
 				044A1E102398E7C100B295BB /* LaunchScreen.storyboard in Resources */,
 				044A1E0D2398E7C100B295BB /* Assets.xcassets in Resources */,
 				044A1E0B2398E7C000B295BB /* Main.storyboard in Resources */,
+				614F455B23BFC7D400CC2235 /* MGS_!.mp3 in Resources */,
+				614F455D23BFC7D400CC2235 /* itemGet.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,7 +266,9 @@
 			files = (
 				040CBB3F23A5257600D79AD6 /* HookingScene.swift in Sources */,
 				040CBB3923A4AB9600D79AD6 /* Visualizer.swift in Sources */,
+				614F455523BFC65300CC2235 /* MainDIsplay.swift in Sources */,
 				040CBB3623A483E700D79AD6 /* SCNMathExtensions.swift in Sources */,
+				665C6E6023BDB3C6009898DD /* FightingScene.swift in Sources */,
 				044A1E082398E7C000B295BB /* ViewController.swift in Sources */,
 				044A1E34239A349700B295BB /* CastScene.swift in Sources */,
 				040CBB3C23A515F300D79AD6 /* CastingScene.swift in Sources */,
@@ -257,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				665C6E5F23BDB3C6009898DD /* FightingScene.swift in Sources */,
 				040CBB3E23A5257600D79AD6 /* HookingScene.swift in Sources */,
 				040CBB3823A4AB9600D79AD6 /* Visualizer.swift in Sources */,
 				040CBB3523A483E700D79AD6 /* SCNMathExtensions.swift in Sources */,
@@ -307,12 +333,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8XMJ7QJQN;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "fishing-ar1231";
+				PRODUCT_BUNDLE_IDENTIFIER = "Fishing-Demo-175714";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -327,12 +353,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R8XMJ7QJQN;
 				INFOPLIST_FILE = fishing_ar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "fishing-ar1231";
+				PRODUCT_BUNDLE_IDENTIFIER = "Fishing-Demo-175714";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -457,14 +483,15 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = CK3TXMV3XX;
+				DEVELOPMENT_TEAM = T7GGQWMV8Q;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "team_contents_2019_fishing macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
+				PRODUCT_BUNDLE_IDENTIFIER = "new-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -479,14 +506,15 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = CK3TXMV3XX;
+				DEVELOPMENT_TEAM = T7GGQWMV8Q;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "team_contents_2019_fishing macOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				PRODUCT_BUNDLE_IDENTIFIER = "akalab.team-contents-2019-fish";
+				PRODUCT_BUNDLE_IDENTIFIER = "new-fish";
 				PRODUCT_NAME = team_contents_2019_fishing;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
