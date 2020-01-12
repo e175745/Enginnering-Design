@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         
         let nextView = storyboard.instantiateViewController(withIdentifier: "View2")as! show_result
         
-        nextView.argString = textField1.text!
+        nextView.argString = textField1.text! 
         
         self.present(nextView, animated: true, completion: nil)
         

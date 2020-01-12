@@ -12,30 +12,52 @@ class show_result: UIViewController {
     
     var argString = ""
     var highScore:Int = 0
-    var rank: [Int] = []
-
+    let rankkey = "rank"
+    let HIGHSCOREKEY = "highScore"
+    
     let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        defaults.register(defaults: [HIGHSCOREKEY:0])
+        highScore = defaults.integer(forKey: HIGHSCOREKEY)
+        
         label1.text = argString
-        let score = Int(argString)
+        let score = Int(argString)!
         //defaults.set(highScore, forKey: "highScore")
         //defaults.synchronize()
-        if(score!>defaults.integer(forKey: "highScore")){
-            defaults.set(score, forKey: "highScore")
+        //if(highScore == nil){
+        //    highScore = 0
+        //}
+        if(score>highScore){
+            defaults.set(score, forKey: HIGHSCOREKEY)
             defaults.synchronize()
-            highScore = score!
-            rank.append(highScore)
-            rank.sort(by: >)
+            highScore = score
         }
-        label2.text = String(defaults.integer(forKey: "highScore"))
+        
+        label2.text = highScore.description
+        
+        /*
+        rank.append(score)
+        rank.sort(by: >)
         
         defaults.set(rank, forKey: "rank")
         defaults.synchronize()
         
         Rank.text = String(defaults.integer(forKey: "rank"))
+        
+        */
+        
+        var RANK: [Int] = defaults.array(forKey: rankkey) as! [Int]
+        RANK.append(score)
+        RANK.sort(by: >)
+        if(RANK.count>3){
+            RANK.removeLast()
+        }
+        Rank.text = String(describing: RANK)
+        defaults.set(RANK, forKey: rankkey)
+        defaults.synchronize()
         
     }
 

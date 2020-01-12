@@ -10,17 +10,22 @@ import UIKit
 
 class rank: UIViewController {
         
-    @IBOutlet weak var rank: UILabel!
+    @IBOutlet weak var Rank: UILabel!
     
     let defaults = UserDefaults.standard
+    
+    //var getrank: [Int] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        defaults.integer(forKey: "rank")
+        //defaults.integer(forKey: "rank")
         
-        rank.text = String(defaults.integer(forKey: "rank"))
+        let getrank: [Int] = defaults.array(forKey: "rank") as! [Int]
         
+        //rank.text = String(defaults.integer(forKey: "rank"))
+        
+        Rank.text = String(describing: getrank)
         
         // Do any additional setup after loading the view.
     }
