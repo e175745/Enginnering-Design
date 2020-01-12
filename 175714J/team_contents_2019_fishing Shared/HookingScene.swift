@@ -102,32 +102,33 @@ class HookingScene: GameSceneBase {
 //            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
 //            print("WaitTime=\(self.WaitTime),Fishrarity=\(self.Fishrarity)")
-            self.Fishrarity = Int(self.WaitTime) * self.Fishrarity//0~100段階評価
-            self.Fishrarity /= 10
+            self.Fishrarity = Int(round(self.WaitTime)) + self.Fishrarity//0~100段階評価
+            self.Fishrarity /= 2
+//            print(self.Fishrarity)
             self.gameStatus.FishRarity = self.Fishrarity
-//print("gameStatusのFishRarityが\(self.gameStatus.FishRarity)に更新されました。")
+//            print("gameStatusのFishRarityが\(self.gameStatus.FishRarity)に更新されました。")
             switch self.Fishrarity{
-            case 1..<3:
-                print("hit?")
-                self.state = State.hooking//hookingに移行する
-                break
-            case 3..<5:
-                print("hit!")
-                self.state = State.hooking
-                break
-            case 5..<10:
-                print("激アツ!!!")
-                self.state = State.hooking
-                break
-            case 10:
-                print("大物の予感！？")
-                self.state = State.hooking
-                break
-            default:
-                print("逃げられた...")
-                self.state = State.hookingfalse//初期画面に戻す処理
-                break
-            }
+                case 1..<4://1~3
+                    print("hit?")
+                    self.state = State.hooking//hookingに移行する
+                    break
+                case 4..<7://4~6
+                    print("hit!")
+                    self.state = State.hooking
+                    break
+                case 7..<10://7~9
+                    print("大物の予感！？")
+                    self.state = State.hooking
+                    break
+                case 10://10
+                    print("激アツ!!!")
+                    self.state = State.hooking
+                    break
+                default:
+                    print("逃げられた...")
+                    self.state = State.hookingfalse//初期画面に戻す処理
+                    break
+                }
         }
     }
     
@@ -159,24 +160,18 @@ class HookingScene: GameSceneBase {
         self.Fishrarity = 10 - self.Fishrarity
         self.Fishrarity *= sendval
 //        print("計算後の判定値は\(Fishrarity)です。")
-        if(Fishrarity < fishleave){
-//            print("+++++++++++++++++失敗+++++++++++++++++++++")
+        if(Fishrarity < fishleave){            print("+++++++++++++++++失敗+++++++++++++++++++++")
 //            print("HitConditionが\(gameStatus.HitCondition)に更新されました。")
             self.state = State.hookingfalse
         }else{
-//            print("+++++++++++++++++成功+++++++++++++++++++++")
+            print("+++++++++++++++++成功+++++++++++++++++++++")
             self.gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
 //            print("gameStatusのHitConditionが\(gameStatus.HitCondition)に更新されました。")
             self.state = State.hookingend//sceneの切り替え
         }
     }
-    override func touched() {//？
-        //state = .hooking
+    override func touched() {
     }
-    
-//    override func name() -> String {//？
-//        return "Hooking"
-//    }
     
     override func name() -> String {
         return "Hooking("+stateDesc[state]!+")"
