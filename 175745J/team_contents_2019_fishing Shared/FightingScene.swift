@@ -79,7 +79,8 @@ class FightingScene: GameSceneBase {
         if state == .successful {
             return nil
         }else if state == .failed{
-            return CastingScene(base:self)
+            self.visualizer.playSound(name: "MGS_!")
+            return BackScene(base:self)
         }else {
             return nil
         }

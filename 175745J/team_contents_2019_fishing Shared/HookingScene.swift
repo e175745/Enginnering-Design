@@ -8,8 +8,10 @@
 
 import Foundation
 import SceneKit
+import AVFoundation
 
 class HookingScene: GameSceneBase {
+    var audioPlayer: AVAudioPlayer!
     var HookAcc = SCNVector3(0,0,0)
     var HookGyro = SCNVector3(0,0,0)
     var gyroX:Float = 0
@@ -17,6 +19,7 @@ class HookingScene: GameSceneBase {
     var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
     var Fishrarity = Int.random(in: 1 ... 10)//魚のレア度をランダムに決定
+    var fishleave = Int.random(in:0 ... 60)
     var calval:Float = 0
     var sendval:Int = 0
     var waitend:Bool = false
@@ -25,7 +28,15 @@ class HookingScene: GameSceneBase {
         case waiting
         case hooking
         case hookingend
+        case hookingfalse
     }
+    
+    let stateDesc: [State:String] = [
+        .waiting:"waiting",
+        .hooking:"hooking",
+        .hookingend:"hookingend",
+        .hookingfalse:"hookingfalse"
+    ]
     
     var state = State.waiting
     
@@ -33,6 +44,10 @@ class HookingScene: GameSceneBase {
         HookAcc = acc//using HookAcc.Z
         HookGyro = gyro//using HookGyro.X
         switch self.state{
+            case .hookingfalse:
+                //ここにHooking失敗の処理
+                print("false")
+                break
             case .waiting:
                 if(waitend != true){
                     self.waittimer()
@@ -67,45 +82,53 @@ class HookingScene: GameSceneBase {
                     self.Hookingresult()
                     break
                 }else{
-                    print("Hookingクラスのseccountが正しい動作をしていません")
+//                    print("Hookingクラスのseccountが正しい動作をしていません")
                     break
             }
         case .hookingend:
             break
         }
     }
+    
     func waittimer(){
         waitend = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
-            //Vizualizerにウキをどのくらい沈めたいかを通知
+            //Vizualizerにウキをどのくらい沈めたいか
+            self.visualizer.moveFloat(to: SCNVector3(self.visualizer.floatObject!.position.x,-0.1,self.visualizer.floatObject!.position.z))
             
-            //低音を流して振動で掛かったことを伝える。
+            // mp3音声(音声の名前.mp3)の再生。音を流して掛かったことを伝える。
+            self.visualizer.playSound(name: "MGS_!")
+            self.visualizer.showImage(name:"exclamation.png",position:CGPoint(x:500,y:750),size:CGSize(width:200,height:200),showTime:1)
+            
 //            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
 //            print("WaitTime=\(self.WaitTime),Fishrarity=\(self.Fishrarity)")
-            self.Fishrarity = Int(self.WaitTime) * self.Fishrarity//0~100段階評価
-            self.Fishrarity /= 10
+            self.Fishrarity = Int(round(self.WaitTime)) + self.Fishrarity//0~100段階評価
+            self.Fishrarity /= 2
+            self.gameStatus.FishRarity = self.Fishrarity
+//print("gameStatusのFishRarityが\(self.gameStatus.FishRarity)に更新されました。")
             switch self.Fishrarity{
-            case 0..<1:
+            case 1..<4://1~3
                 print("hit?")
+                self.state = State.hooking//hookingに移行する
                 break
-            case 1..<5:
+            case 4..<7://4~6
                 print("hit!")
+                self.state = State.hooking
                 break
-            case 5..<10:
-                print("激アツ!!!")
-                break
-            case 10:
+            case 7..<10://7~9
                 print("大物の予感！？")
+                self.state = State.hooking
+                break
+            case 10://10
+                print("激アツ!!!")
+                self.state = State.hooking
                 break
             default:
                 print("逃げられた...")
-                //初期画面に戻す処理
+                self.state = State.hookingfalse//初期画面に戻す処理
                 break
             }
-            self.gameStatus.FishRarity = self.Fishrarity
-//            print("gameStatusのFishRarityが\(self.gameStatus.FishRarity)に更新されました。")
-            self.state = State.hooking//hookingに移行する
         }
     }
     
@@ -127,33 +150,50 @@ class HookingScene: GameSceneBase {
                     calval = (calval-50)/10
                     sendval = Int(floor(calval))
                     break
-                case 150..<1000://10の判定
+                case 150..<500://10の判定
                     sendval = 10
                     break
                 default://0(動かしていない時)や、予期せぬ値
                     sendval = 0
                     break
             }
-        self.gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
-//        print("gameStatusのHitConditionが\(gameStatus.HitCondition)に更新されました。")
-        self.state = State.hookingend//sceneの切り替え
+        self.Fishrarity = 10 - self.Fishrarity
+        self.Fishrarity *= sendval
+//        print("計算後の判定値は\(Fishrarity)です。")
+        if(Fishrarity < fishleave){
+//            print("+++++++++++++++++失敗+++++++++++++++++++++")
+//            print("HitConditionが\(gameStatus.HitCondition)に更新されました。")
+            self.state = State.hookingfalse
+        }else{
+//            print("+++++++++++++++++成功+++++++++++++++++++++")
+            self.gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
+//            print("gameStatusのHitConditionが\(gameStatus.HitCondition)に更新されました。")
+            self.state = State.hookingend//sceneの切り替え
+        }
     }
-    
     override func touched() {//？
         //state = .hooking
     }
     
-    override func name() -> String {//？
-        return "Hooking"
+//    override func name() -> String {//？
+//        return "Hooking"
+//    }
+    
+    override func name() -> String {
+        return "Hooking("+stateDesc[state]!+")"
     }
     
     override func nextScene() -> GameScene? {
-        if state == .hookingend {
+        if(state == .hookingend){
+            
             return FightingScene(base: self)
-        }else {
+            
+        }else if(state == .hookingfalse){
+            
+            return BackScene(base: self)
+            
+        }else{
             return nil
         }
     }
 }
-
-
