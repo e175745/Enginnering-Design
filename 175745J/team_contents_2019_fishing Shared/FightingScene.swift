@@ -17,6 +17,7 @@ class FightingScene: GameSceneBase {
         case failed
     }
 
+    
     var state: State = .fighting
     
     let stateDesc: [State:String] = [
@@ -77,9 +78,10 @@ class FightingScene: GameSceneBase {
 
     override func nextScene() -> GameScene? {
         if state == .successful {
+            self.visualizer.playSound(name: "MGS_!")
+            
             return nil
         }else if state == .failed{
-            self.visualizer.playSound(name: "MGS_!")
             return BackScene(base:self)
         }else {
             return nil

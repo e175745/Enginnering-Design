@@ -15,7 +15,7 @@ class BackScene: GameSceneBase {
     }
     // let retryButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
     var state: State = .preparing
-    let WaitTimeVal:Double = 6
+    let WaitTimeVal:Double = 7
     var WaitStart = false
 
     let stateDesc: [State:String] = [
@@ -38,7 +38,7 @@ class BackScene: GameSceneBase {
     
     func WaitTime(){
         WaitStart = true
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5){
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1){
             self.visualizer.playSound(name: "finish")
             self.visualizer.showImage(name: "Finish.png", position: CGPoint(x:370,y:600), size:CGSize(width:600,height:600), showTime: 7)
         }
