@@ -8,10 +8,8 @@
 
 import Foundation
 import SceneKit
-import AVFoundation
 
 class HookingScene: GameSceneBase {
-    var audioPlayer: AVAudioPlayer!
     var HookAcc = SCNVector3(0,0,0)
     var HookGyro = SCNVector3(0,0,0)
     var gyroX:Float = 0
@@ -19,10 +17,13 @@ class HookingScene: GameSceneBase {
     var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
     var Fishrarity = Int.random(in: 1 ... 10)//魚のレア度をランダムに決定
-    var fishleave = Int.random(in:0 ... 60)
+    var fishleave = Int.random(in:0 ... 10)
     var calval:Float = 0
     var sendval:Int = 0
     var waitend:Bool = false
+    var fishsizeSmall = Double.random(in: 1 ... 3)
+    var fishsizeNormal = Double.random(in: 2 ... 6)
+    var fishsizeBig = Double.random(in: 5 ... 7)
     
     enum State {//処理のグループ分け
         case waiting
@@ -44,10 +45,9 @@ class HookingScene: GameSceneBase {
         HookAcc = acc//using HookAcc.Z
         HookGyro = gyro//using HookGyro.X
         switch self.state{
-            case .hookingfalse:
-                //ここにHooking失敗の処理
-                print("false")
-                break
+            case .hookingfalse: break
+//                ここにHooking失敗の処理
+//                print("false")
             case .waiting:
                 if(waitend != true){
                     self.waittimer()
@@ -85,8 +85,7 @@ class HookingScene: GameSceneBase {
 //                    print("Hookingクラスのseccountが正しい動作をしていません")
                     break
             }
-        case .hookingend:
-            break
+        case .hookingend: break
         }
     }
     
@@ -110,18 +109,22 @@ class HookingScene: GameSceneBase {
             switch self.Fishrarity{
             case 1..<4://1~3
                 print("hit?")
+                self.gameStatus.FishSize = self.fishsizeSmall * Double(self.gameStatus.FishRarity)
                 self.state = State.hooking//hookingに移行する
                 break
             case 4..<7://4~6
                 print("hit!")
+                self.gameStatus.FishSize = self.fishsizeNormal * Double(self.gameStatus.FishRarity)
                 self.state = State.hooking
                 break
             case 7..<10://7~9
                 print("大物の予感！？")
+                self.gameStatus.FishSize = self.fishsizeBig * Double(self.gameStatus.FishRarity)
                 self.state = State.hooking
                 break
             case 10://10
                 print("激アツ!!!")
+                self.gameStatus.FishSize = self.fishsizeBig * 10
                 self.state = State.hooking
                 break
             default:
@@ -171,14 +174,9 @@ class HookingScene: GameSceneBase {
             self.state = State.hookingend//sceneの切り替え
         }
     }
-    override func touched() {//？
-        //state = .hooking
+    override func touched() {
     }
-    
-//    override func name() -> String {//？
-//        return "Hooking"
-//    }
-    
+
     override func name() -> String {
         return "Hooking("+stateDesc[state]!+")"
     }
