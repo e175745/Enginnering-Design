@@ -15,6 +15,7 @@ class GameStatus {
     var HitCondition:Int = 0
     var FishRarity:Int = 0
     var result = "small fish"
+    var isHolding = true
 }
 
 protocol GameScene {
