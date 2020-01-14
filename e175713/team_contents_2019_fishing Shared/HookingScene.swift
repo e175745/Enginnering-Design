@@ -19,10 +19,13 @@ class HookingScene: GameSceneBase {
     var seccount:Float = 0
     var WaitTime = Double.random(in: 1 ... 10)// ランダムな1から10を生成->待ち時間
     var Fishrarity = Int.random(in: 1 ... 10)//魚のレア度をランダムに決定
-    var fishleave = Int.random(in:0 ... 60)
+    var fishleave = Int.random(in:0 ... 10)
     var calval:Float = 0
     var sendval:Int = 0
     var waitend:Bool = false
+    var fishsizeSmall = Double.random(in: 1 ... 3)
+    var fishsizeNormal = Double.random(in: 2 ... 6)
+    var fishsizeBig = Double.random(in: 5 ... 7)
     
     enum State {//処理のグループ分け
         case waiting

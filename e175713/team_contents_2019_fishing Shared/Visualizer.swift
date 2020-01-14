@@ -156,9 +156,8 @@ class FishingVisualizer : Visualizer
                         oldFishObject.removeFromParentNode()
                     }
                     fish.scale = SCNVector3(0.01, 0.01, 0.01)
-                    fish.position = float.position - SCNVector3(0,0.01,0)
+                    fish.position = float.position - SCNVector3(0,0.1,0)
                     base.addChildNode(fish)
-                    print("make Taiyaki !!")
                 }
             }
         }

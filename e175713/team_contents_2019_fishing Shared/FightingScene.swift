@@ -12,6 +12,11 @@ import SceneKit
 class FightingScene: GameSceneBase {
     // FightingScene開始時の時刻を取得
     let startDate = Date()
+    
+    var fishsize:Float = 0
+    
+    let fishTypeList: [String] = ["","takasago","aobudai","tatiuo","rounin","taiyaki"]
+    var number = 0
 
     enum State {
         case start
@@ -45,6 +50,8 @@ class FightingScene: GameSceneBase {
     private func start(){
         self.visualizer.playSound(name: "fight_scene")
         self.state = .fighting
+        //ここの「6」を変動することで近づく速度を変更可能である。
+        fishsize = Float(round(self.gameStatus.FishSize / 6))
     }
 
     //stateがfightingの間、常に呼び出される関数
@@ -68,6 +75,8 @@ class FightingScene: GameSceneBase {
         //Fight中
         let newVelFight1 = self.visualizer.floatObject!.position - SCNVector3(dx/3,0,dz/3)
         let newVelFight2 = self.visualizer.floatObject!.position - SCNVector3(dx/6,0,dz/6)
+        //let newVelFight1 = self.visualizer.floatObject!.position - SCNVector3(dx/self.fishsize,0,dz/self.fishsize)
+        //let newVelFight2 = self.visualizer.floatObject!.position - SCNVector3(dx/(self.fishsize*2),0,dz/(self.fishsize*2))
         //成功したとき
         let newVelFinish = self.visualizer.floatObject!.position - SCNVector3(dx,dy*2,dz)
         // 指定距離に入ったらFighting終了それ以外は続行
@@ -133,7 +142,21 @@ class FightingScene: GameSceneBase {
     override func nextScene() -> GameScene? {
         if state == .successful {
             //Result画面に遷移するのに必要な処理を書く
-            self.visualizer.makeFish(FishName: "taiyaki")
+            print("Rarity:" + String(self.gameStatus.FishRarity))
+            if self.gameStatus.FishRarity == 1 || self.gameStatus.FishRarity == 2 {
+                self.number = 1
+            }else if self.gameStatus.FishRarity == 3 || self.gameStatus.FishRarity == 4 {
+                self.number = 2
+            }else if self.gameStatus.FishRarity == 5 || self.gameStatus.FishRarity == 6 {
+                self.number = 3
+            }else if self.gameStatus.FishRarity == 7 || self.gameStatus.FishRarity == 8{
+                self.number = 4
+            }else{
+                self.number = 5
+            }
+            print("List number:" + String(self.number))
+            print(fishTypeList[self.number])
+            self.visualizer.makeFish(FishName: fishTypeList[self.number])
             return nil
         }else if state == .failed{
             self.failedMove()

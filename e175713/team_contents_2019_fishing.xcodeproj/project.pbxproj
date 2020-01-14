@@ -42,14 +42,14 @@
 		614F456B23CB130A00CC2235 /* Finish.png in Resources */ = {isa = PBXBuildFile; fileRef = 614F456923CB130A00CC2235 /* Finish.png */; };
 		614F456D23CB170F00CC2235 /* kibun issin3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 614F456C23CB170F00CC2235 /* kibun issin3.mp3 */; };
 		614F456E23CB170F00CC2235 /* kibun issin3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 614F456C23CB170F00CC2235 /* kibun issin3.mp3 */; };
-		6621132723CB2A8A00340D97 /* fight_scene.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6621132623CB2A8A00340D97 /* fight_scene.mp3 */; };
-		6621132823CB2A8A00340D97 /* fight_scene.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6621132623CB2A8A00340D97 /* fight_scene.mp3 */; };
 		6621132A23CB2E1B00340D97 /* exclamation.png in Resources */ = {isa = PBXBuildFile; fileRef = 6621132923CB2E1B00340D97 /* exclamation.png */; };
 		6621132B23CB2E1B00340D97 /* exclamation.png in Resources */ = {isa = PBXBuildFile; fileRef = 6621132923CB2E1B00340D97 /* exclamation.png */; };
-		6621133023CB36EE00340D97 /* nami.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6621132F23CB36EE00340D97 /* nami.mp3 */; };
-		6621133123CB36EE00340D97 /* nami.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6621132F23CB36EE00340D97 /* nami.mp3 */; };
 		665C6E5F23BDB3C6009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5E23BDB3C6009898DD /* FightingScene.swift */; };
 		665C6E6023BDB3C6009898DD /* FightingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665C6E5E23BDB3C6009898DD /* FightingScene.swift */; };
+		66F29EE023CC6C87000B6825 /* nami.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 66F29EDF23CC6C86000B6825 /* nami.mp3 */; };
+		66F29EE123CC6C87000B6825 /* nami.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 66F29EDF23CC6C86000B6825 /* nami.mp3 */; };
+		66F29EE323CC6CC9000B6825 /* fight_scene.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 66F29EE223CC6CC9000B6825 /* fight_scene.mp3 */; };
+		66F29EE423CC6CC9000B6825 /* fight_scene.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 66F29EE223CC6CC9000B6825 /* fight_scene.mp3 */; };
 		6AB9F87B23C70F5C0016FE10 /* BackScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB9F87A23C70F5C0016FE10 /* BackScene.swift */; };
 		6AB9F87C23C70F5C0016FE10 /* BackScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB9F87A23C70F5C0016FE10 /* BackScene.swift */; };
 /* End PBXBuildFile section */
@@ -84,10 +84,10 @@
 		614F456323CB0F9C00CC2235 /* finish.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = finish.mp3; sourceTree = "<group>"; };
 		614F456923CB130A00CC2235 /* Finish.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Finish.png; sourceTree = "<group>"; };
 		614F456C23CB170F00CC2235 /* kibun issin3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "kibun issin3.mp3"; sourceTree = "<group>"; };
-		6621132623CB2A8A00340D97 /* fight_scene.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = fight_scene.mp3; path = "../../e175713/team_contents_2019_fishing Shared/fight_scene.mp3"; sourceTree = "<group>"; };
 		6621132923CB2E1B00340D97 /* exclamation.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = exclamation.png; sourceTree = "<group>"; };
-		6621132F23CB36EE00340D97 /* nami.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = nami.mp3; path = "../../e175713/team_contents_2019_fishing Shared/nami.mp3"; sourceTree = "<group>"; };
 		665C6E5E23BDB3C6009898DD /* FightingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FightingScene.swift; sourceTree = "<group>"; };
+		66F29EDF23CC6C86000B6825 /* nami.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = nami.mp3; sourceTree = "<group>"; };
+		66F29EE223CC6CC9000B6825 /* fight_scene.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fight_scene.mp3; sourceTree = "<group>"; };
 		6AB9F87A23C70F5C0016FE10 /* BackScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,8 +152,8 @@
 				614F456C23CB170F00CC2235 /* kibun issin3.mp3 */,
 				614F455923BFC7D400CC2235 /* itemGet.wav */,
 				614F455823BFC7D400CC2235 /* !.mp3 */,
-				6621132623CB2A8A00340D97 /* fight_scene.mp3 */,
-				6621132F23CB36EE00340D97 /* nami.mp3 */,
+				66F29EE223CC6CC9000B6825 /* fight_scene.mp3 */,
+				66F29EDF23CC6C86000B6825 /* nami.mp3 */,
 				04AFC5BA239775560027C5D3 /* Art.scnassets */,
 				04AFC5BB239775580027C5D3 /* Assets.xcassets */,
 			);
@@ -260,18 +260,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66F29EE423CC6CC9000B6825 /* fight_scene.mp3 in Resources */,
 				614F455C23BFC7D400CC2235 /* !.mp3 in Resources */,
 				044A1E162398F04400B295BB /* Art.scnassets in Resources */,
 				614F455A23BFC7D400CC2235 /* Menu_BGM.mp3 in Resources */,
 				614F456E23CB170F00CC2235 /* kibun issin3.mp3 in Resources */,
 				6621132B23CB2E1B00340D97 /* exclamation.png in Resources */,
-				6621132823CB2A8A00340D97 /* fight_scene.mp3 in Resources */,
 				044A1E102398E7C100B295BB /* LaunchScreen.storyboard in Resources */,
 				044A1E0D2398E7C100B295BB /* Assets.xcassets in Resources */,
 				044A1E0B2398E7C000B295BB /* Main.storyboard in Resources */,
 				614F456523CB0F9C00CC2235 /* finish.mp3 in Resources */,
 				614F455B23BFC7D400CC2235 /* MGS_!.mp3 in Resources */,
-				6621133123CB36EE00340D97 /* nami.mp3 in Resources */,
+				66F29EE123CC6C87000B6825 /* nami.mp3 in Resources */,
 				614F456B23CB130A00CC2235 /* Finish.png in Resources */,
 				614F455D23BFC7D400CC2235 /* itemGet.wav in Resources */,
 			);
@@ -281,13 +281,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66F29EE323CC6CC9000B6825 /* fight_scene.mp3 in Resources */,
 				04AFC5DA239775580027C5D3 /* Main.storyboard in Resources */,
+				66F29EE023CC6C87000B6825 /* nami.mp3 in Resources */,
 				04AFC5E1239775580027C5D3 /* Assets.xcassets in Resources */,
-				6621133023CB36EE00340D97 /* nami.mp3 in Resources */,
 				614F456423CB0F9C00CC2235 /* finish.mp3 in Resources */,
 				6621132A23CB2E1B00340D97 /* exclamation.png in Resources */,
 				04AFC5DF239775580027C5D3 /* Art.scnassets in Resources */,
-				6621132723CB2A8A00340D97 /* fight_scene.mp3 in Resources */,
 				614F456A23CB130A00CC2235 /* Finish.png in Resources */,
 				614F456D23CB170F00CC2235 /* kibun issin3.mp3 in Resources */,
 			);
