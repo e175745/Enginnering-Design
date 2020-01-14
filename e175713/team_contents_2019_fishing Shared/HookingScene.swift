@@ -8,10 +8,8 @@
 
 import Foundation
 import SceneKit
-import AVFoundation
 
 class HookingScene: GameSceneBase {
-    var audioPlayer: AVAudioPlayer!
     var HookAcc = SCNVector3(0,0,0)
     var HookGyro = SCNVector3(0,0,0)
     var gyroX:Float = 0
@@ -114,24 +112,29 @@ class HookingScene: GameSceneBase {
             case 1..<4://1~3
                 print("hit?")
                 self.state = State.hooking//hookingに移行する
+                self.gameStatus.FishSize = self.fishsizeSmall * Double(self.gameStatus.FishRarity)
                 break
             case 4..<7://4~6
                 print("hit!")
                 self.state = State.hooking
+                self.gameStatus.FishSize = self.fishsizeNormal * Double(self.gameStatus.FishRarity)
                 break
             case 7..<10://7~9
                 print("大物の予感！？")
                 self.state = State.hooking
+                self.gameStatus.FishSize = self.fishsizeBig * Double(self.gameStatus.FishRarity)
                 break
             case 10://10
                 print("激アツ!!!")
                 self.state = State.hooking
+                self.gameStatus.FishSize = self.fishsizeBig * Double(self.gameStatus.FishRarity)
                 break
             default:
                 print("逃げられた...")
                 self.state = State.hookingfalse//初期画面に戻す処理
                 break
             }
+//            print("サイズはは\(self.gameStatus.FishSize)です,レア度は\(self.gameStatus.FishRarity)です")
         }
     }
     
