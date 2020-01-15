@@ -39,7 +39,7 @@ class BackScene: GameSceneBase {
     func WaitTime(){
         WaitStart = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5){
-            self.visualizer.playSound(name: "finish")
+            self.visualizer.playSound(name: "finish",showTime: 1)
             self.visualizer.showImage(name: "Finish.png", position: CGPoint(x:370,y:600), size:CGSize(width:600,height:600), showTime: 7)
         }
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTimeVal){

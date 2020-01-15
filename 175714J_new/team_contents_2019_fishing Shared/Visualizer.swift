@@ -176,7 +176,7 @@ class FishingVisualizer : Visualizer
         
     }
     
-    func playSound(name: String) {
+    func playSound(name: String,showTime:Double) {
         guard let path = Bundle.main.path(forResource: name, ofType: "mp3") else {
             print("音源ファイルが見つかりません")
             return
@@ -191,6 +191,10 @@ class FishingVisualizer : Visualizer
 
             // 音声の再生
             audioPlayer.play()
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + showTime) {
+                self.audioPlayer.stop()
+            }
         } catch {
         }
     }

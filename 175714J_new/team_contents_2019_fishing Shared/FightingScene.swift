@@ -48,7 +48,7 @@ class FightingScene: GameSceneBase {
     }
     
     private func start(){
-        self.visualizer.playSound(name: "fight_scene")
+        self.visualizer.playSound(name: "fight_scene",showTime: 1)
         self.state = .fighting
         //ここの「6」を変動することで近づく速度を変更可能である。
         fishsize = Float(round(self.gameStatus.FishSize / 6))
@@ -83,7 +83,7 @@ class FightingScene: GameSceneBase {
         if distance < 0.1{
             print("End")
     
-            self.visualizer.playSound(name: "nami")
+            self.visualizer.playSound(name: "nami",showTime: 1)
             self.visualizer.floatObject!.velocity = SCNVector3()
             self.state = .successful
             return visualizer.updateVelocity(to: newVelFinish)

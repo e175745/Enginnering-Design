@@ -53,6 +53,14 @@
 		6AB9F87B23C70F5C0016FE10 /* BackScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB9F87A23C70F5C0016FE10 /* BackScene.swift */; };
 		6AB9F87C23C70F5C0016FE10 /* BackScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB9F87A23C70F5C0016FE10 /* BackScene.swift */; };
 		6AE9A8AE23CDA0480046429A /* free_sound1063.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8AD23CDA0480046429A /* free_sound1063.mp3 */; };
+		6AE9A8B023CDB77D0046429A /* big.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8AF23CDB77D0046429A /* big.png */; };
+		6AE9A8B123CDB77D0046429A /* big.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8AF23CDB77D0046429A /* big.png */; };
+		6AE9A8B323CDB78F0046429A /* Hit!.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B223CDB78F0046429A /* Hit!.png */; };
+		6AE9A8B423CDB78F0046429A /* Hit!.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B223CDB78F0046429A /* Hit!.png */; };
+		6AE9A8B623CDB7A20046429A /* hit.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B523CDB7A20046429A /* hit.png */; };
+		6AE9A8B723CDB7A20046429A /* hit.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B523CDB7A20046429A /* hit.png */; };
+		6AE9A8B923CDB7B00046429A /* superlucky.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B823CDB7B00046429A /* superlucky.png */; };
+		6AE9A8BA23CDB7B00046429A /* superlucky.png in Resources */ = {isa = PBXBuildFile; fileRef = 6AE9A8B823CDB7B00046429A /* superlucky.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +99,10 @@
 		66F29EE223CC6CC9000B6825 /* fight_scene.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fight_scene.mp3; sourceTree = "<group>"; };
 		6AB9F87A23C70F5C0016FE10 /* BackScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackScene.swift; sourceTree = "<group>"; };
 		6AE9A8AD23CDA0480046429A /* free_sound1063.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = free_sound1063.mp3; sourceTree = "<group>"; };
+		6AE9A8AF23CDB77D0046429A /* big.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = big.png; sourceTree = "<group>"; };
+		6AE9A8B223CDB78F0046429A /* Hit!.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Hit!.png"; sourceTree = "<group>"; };
+		6AE9A8B523CDB7A20046429A /* hit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hit.png; sourceTree = "<group>"; };
+		6AE9A8B823CDB7B00046429A /* superlucky.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = superlucky.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +151,10 @@
 		04AFC5B8239775560027C5D3 /* team_contents_2019_fishing Shared */ = {
 			isa = PBXGroup;
 			children = (
+				6AE9A8B823CDB7B00046429A /* superlucky.png */,
+				6AE9A8B523CDB7A20046429A /* hit.png */,
+				6AE9A8B223CDB78F0046429A /* Hit!.png */,
+				6AE9A8AF23CDB77D0046429A /* big.png */,
 				6AE9A8AD23CDA0480046429A /* free_sound1063.mp3 */,
 				040CBB3423A483E700D79AD6 /* SCNMathExtensions.swift */,
 				04AFC5B9239775560027C5D3 /* GameController.swift */,
@@ -264,14 +280,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				66F29EE423CC6CC9000B6825 /* fight_scene.mp3 in Resources */,
+				6AE9A8B423CDB78F0046429A /* Hit!.png in Resources */,
 				614F455C23BFC7D400CC2235 /* !.mp3 in Resources */,
 				044A1E162398F04400B295BB /* Art.scnassets in Resources */,
 				614F455A23BFC7D400CC2235 /* Menu_BGM.mp3 in Resources */,
 				614F456E23CB170F00CC2235 /* kibun issin3.mp3 in Resources */,
 				6621132B23CB2E1B00340D97 /* exclamation.png in Resources */,
+				6AE9A8B123CDB77D0046429A /* big.png in Resources */,
+				6AE9A8BA23CDB7B00046429A /* superlucky.png in Resources */,
 				044A1E102398E7C100B295BB /* LaunchScreen.storyboard in Resources */,
 				044A1E0D2398E7C100B295BB /* Assets.xcassets in Resources */,
 				044A1E0B2398E7C000B295BB /* Main.storyboard in Resources */,
+				6AE9A8B723CDB7A20046429A /* hit.png in Resources */,
 				614F456523CB0F9C00CC2235 /* finish.mp3 in Resources */,
 				614F455B23BFC7D400CC2235 /* MGS_!.mp3 in Resources */,
 				66F29EE123CC6C87000B6825 /* nami.mp3 in Resources */,
@@ -286,12 +306,16 @@
 			files = (
 				66F29EE323CC6CC9000B6825 /* fight_scene.mp3 in Resources */,
 				04AFC5DA239775580027C5D3 /* Main.storyboard in Resources */,
+				6AE9A8B623CDB7A20046429A /* hit.png in Resources */,
 				6AE9A8AE23CDA0480046429A /* free_sound1063.mp3 in Resources */,
 				66F29EE023CC6C87000B6825 /* nami.mp3 in Resources */,
 				04AFC5E1239775580027C5D3 /* Assets.xcassets in Resources */,
 				614F456423CB0F9C00CC2235 /* finish.mp3 in Resources */,
 				6621132A23CB2E1B00340D97 /* exclamation.png in Resources */,
+				6AE9A8B023CDB77D0046429A /* big.png in Resources */,
 				04AFC5DF239775580027C5D3 /* Art.scnassets in Resources */,
+				6AE9A8B923CDB7B00046429A /* superlucky.png in Resources */,
+				6AE9A8B323CDB78F0046429A /* Hit!.png in Resources */,
 				614F456A23CB130A00CC2235 /* Finish.png in Resources */,
 				614F456D23CB170F00CC2235 /* kibun issin3.mp3 in Resources */,
 			);

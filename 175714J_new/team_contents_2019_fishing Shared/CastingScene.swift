@@ -24,7 +24,8 @@ class CastingScene: GameSceneBase {
         .preparing:"preparing",
         .holding:"holding",
         .throwing:"throwing",
-        .sceneCompleted:"scene completed"
+        .sceneCompleted:"scene completed",
+        .sceneFailed:"scene Failed"
     ]
     let DISTACE_FLOAT_HOLD = SCNFloat(0.1)
     var THROWING_VELO = SCNFloat(0)

@@ -135,14 +135,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
         }
     }
-    
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval){
-        if(gameController.status.succeed){
-            goResultView()
-        }
-        print(gameController.status.succeed)
-    }
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -169,18 +161,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         gameController.setGyro(gyro:GYRO)
         gameController.setAcc(acc:ACC)
-    }
-    
-    //result画面へ遷移する関数
-    func goResultView(){
-        DispatchQueue.main.async{
-            let storyboard: UIStoryboard = self.storyboard!
-            
-            let nextView = storyboard.instantiateViewController(withIdentifier: "ResultView")as! ResultViewController
-            nextView.gameStatus=self.gameController.status
-            
-            self.present(nextView, animated: true, completion: nil)
-        }
     }
 }
 
