@@ -41,6 +41,7 @@ class FightingScene: GameSceneBase {
         switch self.state {
         case .start:
             self.start()
+            break
         case .fighting:
             self.timeLimit()
             self.fighting()
@@ -66,27 +67,38 @@ class FightingScene: GameSceneBase {
         self.visualizer.floatObject!.velocity = self.visualizer.floatObject!.velocity - minusPow
     }
 
-    //画面をタッチしたときに呼び出される関数
+    //画面にタッチしたときの呼び出される関数
     override func touched() {
         //オブジェクトとカメラの距離を求める材料
         let dx = self.visualizer.floatObject!.position.x - self.gameStatus.eyePoint.x
         let dy = self.visualizer.floatObject!.position.y - self.gameStatus.eyePoint.y
         let dz = self.visualizer.floatObject!.position.z - self.gameStatus.eyePoint.z
-        //2点間距離(2次元:x-z平面)
+        //2点間距離(2次元)
         let distance = sqrtf(Float(dx*dx+dz*dz))
         //実際に移動するときに渡すベクトル
-        //Fight中に渡す速度ベクトル
+        //Fight中
+        //let newVelFight1 = self.visualizer.floatObject!.position - SCNVector3(dx/3,0,dz/3)
+        //let newVelFight2 = self.visualizer.floatObject!.position - SCNVector3(dx/6,0,dz/6)
         let newVelFight1 = self.visualizer.floatObject!.position - SCNVector3(dx/self.fishsize1,0,dz/self.fishsize1)
         let newVelFight2 = self.visualizer.floatObject!.position - SCNVector3(dx/self.fishsize2,0,dz/self.fishsize2)
-        //成功したときに渡す速度ベクトル
+        //成功したとき
         let newVelFinish = self.visualizer.floatObject!.position - SCNVector3(dx,dy*2,dz)
         // 指定距離に入ったらFighting終了それ以外は続行
         if distance < 0.15{
-            print("End")
+//            print("End")
             self.visualizer.playSound(name: "nami")
             self.state = .successful
-            //print("float:", self.visualizer.floatObject!.position.y)
-            //print("camera:", self.gameStatus.eyePoint.y)
+
+//            print("float:", self.visualizer.floatObject!.position.y)
+//            print("camera:", self.gameStatus.eyePoint.y)
+            /*
+            if self.visualizer.floatObject!.position.y >= 0{//self.gameStatus.eyePoint.y{
+                print("stop")
+                self.failedMove()
+            }else{
+                return visualizer.updateVelocity(to: newVelFinish)
+            }
+            */
             return visualizer.updateVelocity(to: newVelFinish)
         }else if distance > 1{
             //print("Push of if far away")
@@ -102,7 +114,7 @@ class FightingScene: GameSceneBase {
         
         // 制限時間設定に必要な要素を取得
         let limit = Double(gameStatus.HitCondition) * 1.5
-        //let limit = Double(20)//テスト用
+//        let limit = Double(20)
         // 現在時刻と開始時刻の差
         let time = Date().timeIntervalSince(self.startDate as Date)
         // タイマー
@@ -121,10 +133,10 @@ class FightingScene: GameSceneBase {
         //print(dateFormatter.string(from: date_String as Date))
         //print(dateFormatter.string(from: date_Limit as Date))
         //print("=================")
-    
+        
         // 制限時間を超えたらBackSceneに行く
         if date_String >= date_Limit {
-            //print("Failed")
+//            print("Failed")
             self.state = .failed
         }
         
@@ -152,9 +164,10 @@ class FightingScene: GameSceneBase {
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + self.WaitTimeVal){
                 //5sec後に遷移
                 //ここにresult画面に遷移する処理を書く
-                //print("result")
-                self.gameStatus.succeed = true
+//                print("result")
+                print(self.gameStatus.FishRarity,self.gameStatus.FishSize,self.number)
             }
+            //return resultScene
             return nil
         }else if state == .failed{
             self.failedMove()
