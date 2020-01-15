@@ -156,13 +156,8 @@ class HookingScene: GameSceneBase {
             self.state = State.hookingend//sceneの切り替え
         }
     }
-    override func touched() {//？
-        //state = .hooking
+    override func touched() {
     }
-    
-//    override func name() -> String {//？
-//        return "Hooking"
-//    }
     
     override func name() -> String {
         return "Hooking("+stateDesc[state]!+")"
