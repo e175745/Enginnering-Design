@@ -23,9 +23,9 @@ class HookingScene: GameSceneBase {
     var calval:Float = 0
     var sendval:Int = 0
     var waitend:Bool = false
-    var fishsizeSmall = Double.random(in: 1 ... 3)
-    var fishsizeNormal = Double.random(in: 2 ... 6)
-    var fishsizeBig = Double.random(in: 5 ... 7)
+    var fishsizeSmall = Double.random(in: 5 ... 7)
+    var fishsizeNormal = Double.random(in: 5 ... 8)
+    var fishsizeBig = Double.random(in: 5 ... 10)
     
     enum State {//処理のグループ分け
         case waiting
