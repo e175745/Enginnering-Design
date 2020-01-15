@@ -17,6 +17,7 @@ class GameStatus {
     var result = "small fish"
     var isHolding = true
     var FishSize:Double = 0
+    var FishName:String = "FishName"
 }
 
 protocol GameScene {
@@ -27,6 +28,7 @@ protocol GameScene {
     func update(acc:SCNVector3,gyro:SCNVector3)
     func name() -> String
     func nextScene() -> GameScene?
+
 }
 
 class GameSceneBase: GameScene {
@@ -63,4 +65,3 @@ class GameSceneBase: GameScene {
         fatalError("nextScene func must be overrided.")
     }
 }
-

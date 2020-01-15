@@ -8,7 +8,7 @@
 
 import Foundation
 import SceneKit
-//最新版
+//本当に本当に最後かも
 
 class HookingScene: GameSceneBase {
     var HookAcc = SCNVector3(0,0,0)
@@ -23,11 +23,11 @@ class HookingScene: GameSceneBase {
     var calval:Float = 0
     var sendval:Int = 0
     var waitend:Bool = false
-    var fishsizeSmall = Double.random(in: 1 ... 3)
-    var fishsizeNormal = Double.random(in: 2 ... 6)
-    var fishsizeBig = Double.random(in: 5 ... 7)
+    var fishsizeSmall = Double.random(in: 5 ... 7)
+    var fishsizeNormal = Double.random(in: 5 ... 8)
+    var fishsizeBig = Double.random(in: 5 ... 10)
     
-    enum State {//処理のグループ分け
+    enum State {
         case waiting
         case hooking
         case hookingend
@@ -44,8 +44,8 @@ class HookingScene: GameSceneBase {
     var state = State.waiting
     
     override func update(acc:SCNVector3,gyro:SCNVector3){
-        HookAcc = acc//using HookAcc.Z
-        HookGyro = gyro//using HookGyro.X
+        HookAcc = acc
+        HookGyro = gyro
         switch self.state{
             case .hookingfalse:
                 break
@@ -74,14 +74,17 @@ class HookingScene: GameSceneBase {
                         //(動かしていない場合、処理が終わらないことを防ぐ為)
                         seccount += 0.5
                     }
-                }else if (seccount >= 15){//終了時(0.5秒後)にHookingresultを呼び出す
+                }else if (seccount >= 15 && gyroX<1 && accZ<1){
+                    self.state = .hookingfalse
+                    break
+                }else if (seccount >= 15){
                     self.Hookingresult()
                     break
                 }else{
                     self.state = .hookingfalse
 //                    print("Hookingクラスのseccountが正しい動作をしていません")
                     break
-            }
+                }
         case .hookingend:
             break
         }
@@ -90,14 +93,9 @@ class HookingScene: GameSceneBase {
     func waittimer(){
         waitend = true
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTime) {
-            //Vizualizerにウキをどのくらい沈めたいか
             self.visualizer.moveFloat(to: SCNVector3(self.visualizer.floatObject!.position.x,-0.1,self.visualizer.floatObject!.position.z))
-            
-            // mp3音声(音声の名前.mp3)の再生。音を流して掛かったことを伝える。
-            self.visualizer.playSound(name: "MGS_!",showTime: 1)
+            self.visualizer.playSound(name: "MGS_!")
             self.visualizer.showImage(name:"exclamation.png",position:CGPoint(x:500,y:750),size:CGSize(width:200,height:200),showTime:1)
-            
-//            print("＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋魚が掛かった＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋＋")
             //ここで魚の情報が決定する。
             self.rarity = self.Fishrarity + Int(round(self.WaitTime))
             self.rarity /= 2
@@ -112,8 +110,8 @@ class HookingScene: GameSceneBase {
     
     //フッキングの判定と返す値を決定する関数
     func Hookingresult(){
-        accZ = abs(accZ)//accZは負の値なので計算しやすいように正の値に変換する。
-        calval = Float(gyroX * accZ)//取得した値を掛け算する
+        accZ = abs(accZ)
+        calval = Float(gyroX * accZ)
         calval /= 1.5//判定値のカウンタが10カウントを基準に測ったため
         
         if(calval<200 || calval>=1){
@@ -134,26 +132,29 @@ class HookingScene: GameSceneBase {
             case 1..<4://1~3
                 self.visualizer.showImage(name:"hit.png",position:CGPoint(x:500,y:750),size:CGSize(width:400,height:400),showTime:1)
                 self.gameStatus.FishSize = Double(self.gameStatus.FishRarity) * self.fishsizeSmall
+                self.state = State.hookingend
                 break
             case 4..<7://4~6
                 self.visualizer.showImage(name:"Hit!.png",position:CGPoint(x:500,y:750),size:CGSize(width:500,height:500),showTime:1)
                 self.gameStatus.FishSize = Double(self.gameStatus.FishRarity) * self.fishsizeNormal
+                self.state = State.hookingend
                 break
             case 7..<10://7~9
                 self.visualizer.showImage(name:"big.png",position:CGPoint(x:500,y:750),size:CGSize(width:600,height:600),showTime:1)
                 self.gameStatus.FishSize = Double(self.gameStatus.FishRarity) * self.fishsizeBig
+                self.state = State.hookingend
                 break
             case 10://10
                 self.visualizer.showImage(name:"superlucky.png",position:CGPoint(x:500,y:750),size:CGSize(width:900,height:900),showTime:1)
                 self.gameStatus.FishSize = Double(self.gameStatus.FishRarity) * self.fishsizeBig
-                self.visualizer.playSound(name: "free_sound1063",showTime: 1)
+                self.visualizer.playSound(name: "free_sound1063")
+                self.state = State.hookingend
                 break
             default:
-                self.state = State.hookingend
+                self.state = State.hookingfalse
             }
-            self.gameStatus.HitCondition = sendval//Gamestatusに値を引き渡す。
+            self.gameStatus.HitCondition = sendval
 //            print("gameStatusのHitConditionが\(gameStatus.HitCondition)に更新されました。")
-            self.state = State.hookingend//sceneの切り替え
         }
     }
     override func touched() {
