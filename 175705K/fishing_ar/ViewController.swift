@@ -172,16 +172,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     //result画面へ遷移する関数
-    func goResultView(){
-        DispatchQueue.main.async{
-            let storyboard: UIStoryboard = self.storyboard!
+       func goResultView(){
+           DispatchQueue.main.async{
+               let storyboard: UIStoryboard = self.storyboard!
+               
+               let nextView = storyboard.instantiateViewController(withIdentifier: "ResultView")as! ResultViewController
             
-            let nextView = storyboard.instantiateViewController(withIdentifier: "ResultView")as! ResultViewController
-            nextView.gameStatus=self.gameController.status
-            
-            self.present(nextView, animated: true, completion: nil)
-        }
-    }
+               nextView.gameStatus=self.gameController.status
+               
+               self.present(nextView, animated: true, completion: nil)
+           }
+       }
 }
 
 //extension ViewController: AVAudioPlayerDelegate {

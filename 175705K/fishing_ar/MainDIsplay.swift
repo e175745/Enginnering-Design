@@ -31,18 +31,6 @@ class MainDIsplay: UIViewController {
         // タイトル画像設定
         TitleView.image = title_image
     }
-    
-    @IBAction func goRank(_ sender: Any) {
-        
-        let storyboard: UIStoryboard = self.storyboard!
-        
-        let nextView = storyboard.instantiateViewController(withIdentifier: "RankView")as! RankViewController
-        
-        self.present(nextView, animated: true, completion: nil)
-        
-    }
-    
-    
 }
 
 extension MainDIsplay: AVAudioPlayerDelegate {

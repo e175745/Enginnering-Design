@@ -157,8 +157,11 @@ class FishingVisualizer : Visualizer
                     if let oldFishObject = base.childNode(withName:FishName,recursively: true){
                         oldFishObject.removeFromParentNode()
                     }
-                    fish.scale = SCNVector3(0.01, 0.01, 0.01)
-                    fish.position = float.position - SCNVector3(0,0.1,0)
+                    fish.scale = SCNVector3(0.02, 0.02, 0.02)
+                    fish.position = float.position - SCNVector3(0,0.15,0)
+                    if FishName == "taiyaki"{
+                        fish.position.x = float.position.x - 0.025
+                    }
                     base.addChildNode(fish)
                 }
             }
@@ -191,6 +194,7 @@ class FishingVisualizer : Visualizer
 
             // 音声の再生
             audioPlayer.play()
+            
         } catch {
         }
     }
@@ -223,13 +227,5 @@ class FishingVisualizer : Visualizer
         }else{
             doesOverlapWithLake = false
         }
-        
-                                            
     }
-    /*
-    // 音楽停止用
-    func stopSound(){
-        self.audioPlayer.stop()
-    }
-    */
 }

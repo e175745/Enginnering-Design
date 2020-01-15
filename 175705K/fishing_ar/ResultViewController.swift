@@ -14,6 +14,8 @@ class ResultViewController: UIViewController{
     
     @IBOutlet weak var FishSizeLabel: UILabel!
     
+    @IBOutlet weak var FishNameLabel: UILabel!
+    
     //userDefaultsの定義
     let userDefaults = UserDefaults.standard
     
@@ -22,24 +24,27 @@ class ResultViewController: UIViewController{
     
     var gameStatus: GameStatus!
     
-    var HighScore:Double = 0
+    var HighScore:Int = 0
     //var RANK = [Double]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         userDefaults.register(defaults: [HIGHSCOREKEY:0])
-        HighScore = Double(userDefaults.integer(forKey: HIGHSCOREKEY))
+        HighScore = (userDefaults.integer(forKey: HIGHSCOREKEY))
         
-        FishSizeLabel.text = String(round(gameStatus.FishSize*100)/100)
-        if(round(gameStatus.FishSize*100)/100 > HighScore){
-            userDefaults.set(round(gameStatus.FishSize*100)/100, forKey: HIGHSCOREKEY)
+        FishSizeLabel.text = String(Int(gameStatus.FishSize))
+        if(Int(gameStatus.FishSize) > HighScore){
+            userDefaults.set(gameStatus.FishSize, forKey: HIGHSCOREKEY)
             userDefaults.synchronize()
-            HighScore = round(gameStatus.FishSize*100)/100
+            HighScore = Int(gameStatus.FishSize)
         }
         
         HighScoreLabel.text = HighScore.description
         
+        FishNameLabel.text = gameStatus.FishName
+        
+        /*
         //userDefaults.set(RANK, forKey: RANKKEY)
         //userDefaults.synchronize()
         var getRANK: [Double] = userDefaults.array(forKey: RANKKEY) as! [Double]
@@ -50,6 +55,7 @@ class ResultViewController: UIViewController{
         }
         userDefaults.set(getRANK, forKey: RANKKEY)
         userDefaults.synchronize()
+        */
         
     }
     
@@ -62,6 +68,7 @@ class ResultViewController: UIViewController{
         self.present(nextView, animated: true, completion: nil)
     }
     
+    /*
     @IBAction func goRankView(_ sender: Any) {
         
         let storyboard: UIStoryboard = self.storyboard!
@@ -71,4 +78,5 @@ class ResultViewController: UIViewController{
         self.present(nextView, animated: true, completion: nil)
         
     }
+    */
 }
