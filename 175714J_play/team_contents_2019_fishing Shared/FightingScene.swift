@@ -17,9 +17,12 @@ class FightingScene: GameSceneBase {
     var fishsize2:Float = 0
     var limit_start:Double = 0
     let WaitTimeVal:Double = 5
+    var limit:Double = 0
     
     let fishTypeList: [String] = ["","takasago","aobudai","tatiuo","rounin","taiyaki"]
-    var number = 0
+    var FishTypeSmall = Int.random(in:1 ... 3)
+    var FishTypeNormal = Int.random(in:2 ... 4)
+    var FishTypeBig = Int.random(in:3 ... 5)
 
     enum State {
         case start
@@ -54,7 +57,7 @@ class FightingScene: GameSceneBase {
         self.visualizer.playSound(name: "fight_scene")
         //ここの「6」を変動することで近づく速度を変更可能である。
         self.fishsize1 = Float(round(self.gameStatus.FishSize / 10))
-        self.fishsize2 = Float(round(self.gameStatus.FishSize / 5))
+        self.fishsize2 = Float(round(self.gameStatus.FishSize / 7))
         self.state = .fighting
     }
 
@@ -113,7 +116,12 @@ class FightingScene: GameSceneBase {
     private func timeLimit(){
         
         // 制限時間設定に必要な要素を取得
-        let limit = Double(gameStatus.HitCondition) * 1.5
+        if self.gameStatus.HitCondition>7{
+            limit = Double(self.gameStatus.HitCondition) * 3
+        }else{
+            limit = Double(self.gameStatus.HitCondition) * 1.5
+        }
+        
 //        let limit = Double(20)
         // 現在時刻と開始時刻の差
         let time = Date().timeIntervalSince(self.startDate as Date)
@@ -153,10 +161,21 @@ class FightingScene: GameSceneBase {
 
     override func nextScene() -> GameScene? {
         if state == .successful {
-            self.number = Int(floor((Double(self.gameStatus.FishRarity)+1)/2))
+//            self.number = Int(floor((Double(self.gameStatus.FishRarity)+1)/2))
             //print("List number:" + String(self.number))
             //print(fishTypeList[self.number])
-            self.visualizer.makeFish(FishName: self.fishTypeList[self.number])
+            switch self.gameStatus.FishRarity {
+            case 1..<4:
+                self.visualizer.makeFish(FishName: self.fishTypeList[self.FishTypeSmall])
+            case 4..<7:
+                self.visualizer.makeFish(FishName: self.fishTypeList[self.FishTypeNormal])
+            case 7..<10:
+                self.visualizer.makeFish(FishName: self.fishTypeList[self.FishTypeBig])
+            case 10:
+                self.visualizer.makeFish(FishName: self.fishTypeList[5])
+            default:
+                break
+            }
             
             if self.visualizer.floatObject!.position.y >= 0.15{
                 self.failedMove()
@@ -165,7 +184,7 @@ class FightingScene: GameSceneBase {
                 //5sec後に遷移
                 //ここにresult画面に遷移する処理を書く
 //                print("result")
-                print(self.gameStatus.FishRarity,self.gameStatus.FishSize,self.number)
+                print(self.gameStatus.FishRarity,self.gameStatus.FishSize)
             }
             //return resultScene
             return nil
