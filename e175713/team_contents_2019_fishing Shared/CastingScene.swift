@@ -16,6 +16,7 @@ class CastingScene: GameSceneBase {
         case holding
         case throwing
         case sceneCompleted
+        case sceneFailed
     }
     
     var state: State = .preparing
@@ -23,7 +24,8 @@ class CastingScene: GameSceneBase {
         .preparing:"preparing",
         .holding:"holding",
         .throwing:"throwing",
-        .sceneCompleted:"scene completed"
+        .sceneCompleted:"scene completed",
+        .sceneFailed:"scene Failed"
     ]
     let DISTACE_FLOAT_HOLD = SCNFloat(0.1)
     var THROWING_VELO = SCNFloat(0)
@@ -59,9 +61,14 @@ class CastingScene: GameSceneBase {
     private func throwing() {
         let FLOAT_DEPTH = 0 as SCNFloat
         if visualizer.floatObject!.position.y < FLOAT_DEPTH {
-            state = .sceneCompleted
-            visualizer.floatObject!.velocity = SCNVector3()
-            visualizer.floatObject!.gravity = SCNVector3()
+            if visualizer.doesOverlapWithLake{
+                state = .sceneCompleted
+                visualizer.floatObject!.velocity = SCNVector3()
+                visualizer.floatObject!.gravity = SCNVector3()
+            }else{
+                state = .sceneFailed
+            }
+            
         }
     }
     
@@ -83,9 +90,12 @@ class CastingScene: GameSceneBase {
         }
     }
     
+    
     override func nextScene() -> GameScene? {
         if state == .sceneCompleted {
             return HookingScene(base: self)
+        }else if(state == .sceneFailed){
+            return BackScene(base: self)
         }else {
             return nil
         }

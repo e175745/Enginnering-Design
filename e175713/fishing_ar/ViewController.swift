@@ -90,12 +90,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // 平面ジオメトリを作成
         let geometry = SCNPlane(width: imageAnchor.referenceImage.physicalSize.width, height: imageAnchor.referenceImage.physicalSize.height)
         geometry.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(0.5)
-
+            
+        let lakeScene = SCNScene(named: "lake.scn",inDirectory: "Art.scnassets")
         // 平面ジオメトリを持つノードを作成
-        let planeNode = SCNNode(geometry: geometry)
-            planeNode.name="plane"
+        var planeNode = SCNNode(geometry: geometry)
+            
+            if let dummyPlane = lakeScene?.rootNode.childNode(withName:"Plane",recursively: true){
+                dummyPlane.scale=SCNVector3(0.04,0.04,0.04)
+                planeNode=dummyPlane
+                gameController.visualizer.lakeNode = planeNode
+            }
+        
+        planeNode.name="plane"
             //x-z平面に合わせる
-        planeNode.eulerAngles.x = -Float.pi/2
+        planeNode.eulerAngles.x = -Float.pi*3/2
         //planeNode.transform = SCNMatrix4MakeRotation(-Float.pi / 2.0, 1, 0, 0)
             
             let position=SCNVector3(anchor.transform.columns.3.x,anchor.transform.columns.3.y,anchor.transform.columns.3.z)

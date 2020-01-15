@@ -93,7 +93,9 @@ class FishingVisualizer : Visualizer
 {
     var floatObject: MovingObject?
     let GRAVITY = SCNVector3(0,-0.98,0)
+    var lakeNode:SCNNode?
     
+    var doesOverlapWithLake = false
     override init(arScene:SCNScene) {
         super.init()
         prepareScene(arScene: arScene)
@@ -192,6 +194,7 @@ class FishingVisualizer : Visualizer
 
             // 音声の再生
             audioPlayer.play()
+            
         } catch {
         }
     }
@@ -210,10 +213,19 @@ class FishingVisualizer : Visualizer
         }
     }
     
-    /*
-    // 音楽停止用
-    func stopSound(){
-        self.audioPlayer.stop()
+    override func update(deltaTime daltaTime: Double){
+        super.update(deltaTime: daltaTime)
+        guard let float_node=floatObject?.node,
+            let lake_node = lakeNode else { return }
+        
+        let float_local = lake_node.convertPosition(float_node.position,from:float_node)
+        let ray_org = float_local + SCNVector3(0,999,0)
+        let ray_dst = float_local + SCNVector3(0,-999,0)
+        let hit_result = lake_node.hitTestWithSegment(from: ray_org, to: ray_dst, options: nil)
+        if hit_result.count > 0{
+            doesOverlapWithLake = true
+        }else{
+            doesOverlapWithLake = false
+        }
     }
-    */
 }
