@@ -17,6 +17,8 @@ class GameStatus {
     var result = "small fish"
     var isHolding = true
     var FishSize:Double = 0
+    var succeed = false
+    var FishName:String = "FishName"
 }
 
 protocol GameScene {

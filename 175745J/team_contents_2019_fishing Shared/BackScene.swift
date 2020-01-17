@@ -15,8 +15,9 @@ class BackScene: GameSceneBase {
     }
     // let retryButton: UIButton = UIButton(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
     var state: State = .preparing
-    let WaitTimeVal:Double = 7
-    var WaitStart = false
+    let WaitTimeVal:Double = 3
+    var WaitStart:Bool = false
+    var back:Bool = false
 
     let stateDesc: [State:String] = [
         .preparing:"preparing",
@@ -38,12 +39,13 @@ class BackScene: GameSceneBase {
     
     func WaitTime(){
         WaitStart = true
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1){
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5){
+            self.visualizer.showImage(name: "result.png", position: CGPoint(x:370,y:600), size:CGSize(width:600,height:600), showTime: 3)
             self.visualizer.playSound(name: "finish")
-            self.visualizer.showImage(name: "Finish.png", position: CGPoint(x:370,y:600), size:CGSize(width:600,height:600), showTime: 7)
-        }
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + WaitTimeVal){
-            self.state = .GoBack
+            //self.visualizer.playSound(name: "finish")
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + self.WaitTimeVal){
+                self.back = true
+            }
         }
     }
     
@@ -53,6 +55,9 @@ class BackScene: GameSceneBase {
     
     //画面をタッチしたときに呼び出される関数
     override func touched() {
+        if self.back==true{
+            self.state = .GoBack
+        }
     }
     
     // 現在の状態をテキストで返す関数
@@ -63,6 +68,7 @@ class BackScene: GameSceneBase {
     // 状態によって画面を遷移させる関数
     override func nextScene() -> GameScene? {
         if state == .GoBack {
+            self.back = false
             return CastingScene(base: self)
         }else{
             return nil

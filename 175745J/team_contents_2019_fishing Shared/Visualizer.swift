@@ -93,7 +93,9 @@ class FishingVisualizer : Visualizer
 {
     var floatObject: MovingObject?
     let GRAVITY = SCNVector3(0,-0.98,0)
+    var lakeNode:SCNNode?
     
+    var doesOverlapWithLake = false
     override init(arScene:SCNScene) {
         super.init()
         prepareScene(arScene: arScene)
@@ -122,25 +124,48 @@ class FishingVisualizer : Visualizer
     
     func makeLine(status:GameStatus){
         if !status.isHolding{
-        if let base=scene.rootNode.childNode(withName: "base", recursively: true){
-        if let float=floatObject{
-            let from = SCNVector3(status.eyePoint.x+status.viewVector.x*0.1,status.eyePoint.y+status.viewVector.y*0.1+0.4,status.eyePoint.z+status.viewVector.z*0.1)
-            let to = float.position
-            if let oldLineObject = base.childNode(withName:"line",recursively: true){
-                oldLineObject.removeFromParentNode()
-                }
-            let source = SCNGeometrySource(vertices: [from, to])
-            let indices: [Int32] = [0, 1]
-            let element = SCNGeometryElement(indices: indices, primitiveType: .line)
-            let line = SCNGeometry(sources: [source], elements: [element])
-            line.firstMaterial?.lightingModel = SCNMaterial.LightingModel.blinn
-            let dummyLine = SCNNode(geometry: line)
-            dummyLine.geometry?.firstMaterial?.emission.contents = SCNColor.white
-            dummyLine.name="line"
-            base.addChildNode(dummyLine)
+            if let base=scene.rootNode.childNode(withName: "base", recursively: true){
+            if let float=floatObject{
+                let from = SCNVector3(status.eyePoint.x+status.viewVector.x*0.1,status.eyePoint.y+status.viewVector.y*0.1+0.4,status.eyePoint.z+status.viewVector.z*0.1)
+                let to = float.position
+                if let oldLineObject = base.childNode(withName:"line",recursively: true){
+                    oldLineObject.removeFromParentNode()
+                    }
+                let source = SCNGeometrySource(vertices: [from, to])
+                let indices: [Int32] = [0, 1]
+                let element = SCNGeometryElement(indices: indices, primitiveType: .line)
+                let line = SCNGeometry(sources: [source], elements: [element])
+                line.firstMaterial?.lightingModel = SCNMaterial.LightingModel.blinn
+                let dummyLine = SCNNode(geometry: line)
+                dummyLine.geometry?.firstMaterial?.emission.contents = SCNColor.white
+                dummyLine.name="line"
+                base.addChildNode(dummyLine)
+            }
+        }
         }
     }
-    }
+    
+    // add by Mori
+    func makeFish(FishName: String) {
+        
+        let fishFileName = FishName + ".scn"
+        
+        if let base=scene.rootNode.childNode(withName: "base", recursively: true){
+            if let float = floatObject{
+                let fishScene = SCNScene(named: fishFileName, inDirectory: "Art.scnassets")
+                if let fish = fishScene?.rootNode.childNode(withName: FishName, recursively: true){
+                    if let oldFishObject = base.childNode(withName:FishName,recursively: true){
+                        oldFishObject.removeFromParentNode()
+                    }
+                    fish.scale = SCNVector3(0.02, 0.02, 0.02)
+                    fish.position = float.position - SCNVector3(0,0.15,0)
+                    if FishName == "taiyaki"{
+                        fish.position.x = float.position.x - 0.025
+                    }
+                    base.addChildNode(fish)
+                }
+            }
+        }
     }
     
     func moveFloat(to: SCNVector3) {
@@ -169,6 +194,7 @@ class FishingVisualizer : Visualizer
 
             // 音声の再生
             audioPlayer.play()
+            
         } catch {
         }
     }
@@ -184,6 +210,22 @@ class FishingVisualizer : Visualizer
             }
         }else{
             print("画像表示ができません")
+        }
+    }
+    
+    override func update(deltaTime daltaTime: Double){
+        super.update(deltaTime: daltaTime)
+        guard let float_node=floatObject?.node,
+            let lake_node = lakeNode else { return }
+        
+        let float_local = lake_node.convertPosition(float_node.position,from:float_node)
+        let ray_org = float_local + SCNVector3(0,999,0)
+        let ray_dst = float_local + SCNVector3(0,-999,0)
+        let hit_result = lake_node.hitTestWithSegment(from: ray_org, to: ray_dst, options: nil)
+        if hit_result.count > 0{
+            doesOverlapWithLake = true
+        }else{
+            doesOverlapWithLake = false
         }
     }
 }
